@@ -17,9 +17,9 @@ import (
 
 	"strconv"
 
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/logging"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/modulescommon"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/privileges"
+	"github.com/DeimosC2/DeimosC2/lib/logging"
+	"github.com/DeimosC2/DeimosC2/lib/modulescommon"
+	"github.com/DeimosC2/DeimosC2/lib/privileges"
 	ps "github.com/mitchellh/go-ps"
 )
 

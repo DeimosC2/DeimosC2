@@ -14,10 +14,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/gobfuscate"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/lib/validation"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/webserver/websockets"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/logging"
+	"github.com/DeimosC2/DeimosC2/c2/gobfuscate"
+	"github.com/DeimosC2/DeimosC2/c2/lib/validation"
+	"github.com/DeimosC2/DeimosC2/c2/webserver/websockets"
+	"github.com/DeimosC2/DeimosC2/lib/logging"
 )
 
 //Tells us if things are precompiled
@@ -478,7 +478,7 @@ func moveToGoPath() {
 	if goPath == "" {
 		goPath = build.Default.GOPATH
 	}
-	destPath := path.Join(goPath, "src", "github.com", "AdvancedThreatAnalytics", "DeimosC2")
+	destPath := path.Join(goPath, "src", "github.com", "DeimosC2", "DeimosC2")
 
 	for _, x := range []string{"agents", "lib"} {
 

@@ -10,13 +10,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/agents"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/lib/sqldb"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/modules"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/webserver/websockets"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/agentscommon"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/logging"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/modulescommon"
+	"github.com/DeimosC2/DeimosC2/c2/agents"
+	"github.com/DeimosC2/DeimosC2/c2/lib/sqldb"
+	"github.com/DeimosC2/DeimosC2/c2/modules"
+	"github.com/DeimosC2/DeimosC2/c2/webserver/websockets"
+	"github.com/DeimosC2/DeimosC2/lib/agentscommon"
+	"github.com/DeimosC2/DeimosC2/lib/logging"
+	"github.com/DeimosC2/DeimosC2/lib/modulescommon"
 )
 
 //ListOptions holds all possible options required for listeners

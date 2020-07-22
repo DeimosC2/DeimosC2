@@ -20,14 +20,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/AdvancedThreatAnalytics/DeimosC2/agents/resources/agentfunctions"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/agents/resources/selfdestruction"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/agents/resources/shellinject"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/agentscommon"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/crypto"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/logging"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/modulescommon"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/utils"
+	"github.com/DeimosC2/DeimosC2/agents/resources/agentfunctions"
+	"github.com/DeimosC2/DeimosC2/agents/resources/selfdestruction"
+	"github.com/DeimosC2/DeimosC2/agents/resources/shellinject"
+	"github.com/DeimosC2/DeimosC2/lib/agentscommon"
+	"github.com/DeimosC2/DeimosC2/lib/crypto"
+	"github.com/DeimosC2/DeimosC2/lib/logging"
+	"github.com/DeimosC2/DeimosC2/lib/modulescommon"
+	"github.com/DeimosC2/DeimosC2/lib/utils"
 	"github.com/miekg/dns"
 )
 

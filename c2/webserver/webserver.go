@@ -16,16 +16,16 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/gorilla/websocket"
 
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/agents"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/lib"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/lib/archive"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/lib/sqldb"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/lib/validation"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/loot"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/webserver/mfa"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/webserver/websockets"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/webshells"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/logging"
+	"github.com/DeimosC2/DeimosC2/c2/agents"
+	"github.com/DeimosC2/DeimosC2/c2/lib"
+	"github.com/DeimosC2/DeimosC2/c2/lib/archive"
+	"github.com/DeimosC2/DeimosC2/c2/lib/sqldb"
+	"github.com/DeimosC2/DeimosC2/c2/lib/validation"
+	"github.com/DeimosC2/DeimosC2/c2/loot"
+	"github.com/DeimosC2/DeimosC2/c2/webserver/mfa"
+	"github.com/DeimosC2/DeimosC2/c2/webserver/websockets"
+	"github.com/DeimosC2/DeimosC2/c2/webshells"
+	"github.com/DeimosC2/DeimosC2/lib/logging"
 )
 
 var store *sessions.CookieStore

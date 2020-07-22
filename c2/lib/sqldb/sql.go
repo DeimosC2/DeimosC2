@@ -14,9 +14,9 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/lib/validation"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/webserver/websockets"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/logging"
+	"github.com/DeimosC2/DeimosC2/c2/lib/validation"
+	"github.com/DeimosC2/DeimosC2/c2/webserver/websockets"
+	"github.com/DeimosC2/DeimosC2/lib/logging"
 )
 
 type adminStruct struct {

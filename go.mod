@@ -1,4 +1,4 @@
-module github.com/AdvancedThreatAnalytics/DeimosC2
+module github.com/DeimosC2/DeimosC2
 
 go 1.13
 

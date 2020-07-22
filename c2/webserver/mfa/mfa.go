@@ -7,8 +7,8 @@ import (
 	"encoding/base64"
 	"strings"
 
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/webserver/googauth"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/logging"
+	"github.com/DeimosC2/DeimosC2/c2/webserver/googauth"
+	"github.com/DeimosC2/DeimosC2/lib/logging"
 	"github.com/aaronarduino/goqrsvg"
 	svg "github.com/ajstarks/svgo"
 	"github.com/boombuler/barcode/qr"

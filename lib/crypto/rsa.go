@@ -7,7 +7,7 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/logging"
+	"github.com/DeimosC2/DeimosC2/lib/logging"
 )
 
 //GenerateKeyPair generates a new key pair

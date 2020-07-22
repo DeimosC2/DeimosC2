@@ -24,7 +24,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/logging"
+	"github.com/DeimosC2/DeimosC2/lib/logging"
 )
 
 func publicKey(priv interface{}) interface{} {

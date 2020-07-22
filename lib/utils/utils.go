@@ -6,8 +6,8 @@ import (
 	"io"
 	"io/ioutil"
 
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/crypto"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/logging"
+	"github.com/DeimosC2/DeimosC2/lib/crypto"
+	"github.com/DeimosC2/DeimosC2/lib/logging"
 )
 
 //PrepData encrypts and compresses data to be sent for DNS listeners

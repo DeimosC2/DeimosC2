@@ -1,6 +1,6 @@
 package main
 
-import "github.com/AdvancedThreatAnalytics/DeimosC2/lib/logging"
+import "github.com/DeimosC2/DeimosC2/lib/logging"
 
 //Listener
 var ip = "127.0.0.1"

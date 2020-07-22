@@ -14,7 +14,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/logging"
+	"github.com/DeimosC2/DeimosC2/lib/logging"
 )
 
 //ObfuscateStrings is used to obfuscate strings in the custom golang files

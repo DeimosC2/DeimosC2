@@ -10,11 +10,11 @@ import (
 	"path"
 	"time"
 
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/agents"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/lib/certs"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/lib/validation"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/crypto"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/logging"
+	"github.com/DeimosC2/DeimosC2/c2/agents"
+	"github.com/DeimosC2/DeimosC2/c2/lib/certs"
+	"github.com/DeimosC2/DeimosC2/c2/lib/validation"
+	"github.com/DeimosC2/DeimosC2/lib/crypto"
+	"github.com/DeimosC2/DeimosC2/lib/logging"
 	"github.com/gorilla/mux"
 )
 

@@ -17,10 +17,10 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/loot"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/webserver/websockets"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/logging"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/modulescommon"
+	"github.com/DeimosC2/DeimosC2/c2/loot"
+	"github.com/DeimosC2/DeimosC2/c2/webserver/websockets"
+	"github.com/DeimosC2/DeimosC2/lib/logging"
+	"github.com/DeimosC2/DeimosC2/lib/modulescommon"
 )
 
 //ModData is used for RPC
@@ -97,7 +97,7 @@ func StartModule(data modulescommon.ModuleCom, ft string) {
 	case "windows":
 		ft = ".exe"
 	case "linux":
-		ft = "elf"
+		ft = ".elf"
 	case "darwin":
 		ft = ".o"
 	}

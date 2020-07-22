@@ -8,7 +8,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/logging"
+	"github.com/DeimosC2/DeimosC2/lib/logging"
 )
 
 func pad(src []byte) []byte {

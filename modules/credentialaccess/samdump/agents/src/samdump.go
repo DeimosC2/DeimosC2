@@ -14,8 +14,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/logging"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/modulescommon"
+	"github.com/DeimosC2/DeimosC2/lib/logging"
+	"github.com/DeimosC2/DeimosC2/lib/modulescommon"
 )
 
 type downloadFiles struct {

@@ -14,17 +14,17 @@ import (
 	"strings"
 	"time"
 
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/agents"
+	"github.com/DeimosC2/DeimosC2/c2/agents"
 
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/lib"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/lib/archive"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/lib/certs"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/lib/gobuild"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/lib/sqldb"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/modules"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/webserver"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/webshells"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/logging"
+	"github.com/DeimosC2/DeimosC2/c2/lib"
+	"github.com/DeimosC2/DeimosC2/c2/lib/archive"
+	"github.com/DeimosC2/DeimosC2/c2/lib/certs"
+	"github.com/DeimosC2/DeimosC2/c2/lib/gobuild"
+	"github.com/DeimosC2/DeimosC2/c2/lib/sqldb"
+	"github.com/DeimosC2/DeimosC2/c2/modules"
+	"github.com/DeimosC2/DeimosC2/c2/webserver"
+	"github.com/DeimosC2/DeimosC2/c2/webshells"
+	"github.com/DeimosC2/DeimosC2/lib/logging"
 )
 
 //If the server is restarted or brought back up then this function brings everything back up

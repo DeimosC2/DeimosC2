@@ -4,9 +4,9 @@ import (
 	"encoding/binary"
 	"net"
 
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/agents"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/crypto"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/logging"
+	"github.com/DeimosC2/DeimosC2/c2/agents"
+	"github.com/DeimosC2/DeimosC2/lib/crypto"
+	"github.com/DeimosC2/DeimosC2/lib/logging"
 )
 
 //JobCount is a global variable containing the number of jobs

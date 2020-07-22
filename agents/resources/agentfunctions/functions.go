@@ -16,11 +16,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/AdvancedThreatAnalytics/DeimosC2/agents/resources/filebrowser"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/agents/resources/fingerprint"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/agents/resources/shellexec"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/agentscommon"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/privileges"
+	"github.com/DeimosC2/DeimosC2/agents/resources/filebrowser"
+	"github.com/DeimosC2/DeimosC2/agents/resources/fingerprint"
+	"github.com/DeimosC2/DeimosC2/agents/resources/shellexec"
+	"github.com/DeimosC2/DeimosC2/lib/agentscommon"
+	"github.com/DeimosC2/DeimosC2/lib/privileges"
 )
 
 var cwd string //Current shell working directory

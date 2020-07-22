@@ -14,11 +14,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/agents"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/lib/validation"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/crypto"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/logging"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/utils"
+	"github.com/DeimosC2/DeimosC2/c2/agents"
+	"github.com/DeimosC2/DeimosC2/c2/lib/validation"
+	"github.com/DeimosC2/DeimosC2/lib/crypto"
+	"github.com/DeimosC2/DeimosC2/lib/logging"
+	"github.com/DeimosC2/DeimosC2/lib/utils"
 	"github.com/miekg/dns"
 )
 

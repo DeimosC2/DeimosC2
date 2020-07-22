@@ -13,7 +13,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/logging"
+	"github.com/DeimosC2/DeimosC2/lib/logging"
 )
 
 //DllOptions is a struct for passinng DLL arguments

@@ -1,8 +1,8 @@
 package validation
 
 import (
-	"github.com/AdvancedThreatAnalytics/DeimosC2/c2/webserver/websockets"
-	"github.com/AdvancedThreatAnalytics/DeimosC2/lib/logging"
+	"github.com/DeimosC2/DeimosC2/c2/webserver/websockets"
+	"github.com/DeimosC2/DeimosC2/lib/logging"
 	"github.com/gorilla/websocket"
 )
 
