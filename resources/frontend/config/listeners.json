@@ -1,0 +1,472 @@
+{
+  "HTTPS": {
+    "Name": {
+      "required": true,
+      "type": "string",
+      "default": "httpsListener"
+    },
+    "Port": {
+      "required": true,
+      "type": "string",
+      "default": "4443"
+    },
+    "Host": {
+      "required": true,
+      "type": "string",
+      "default": "127.0.0.1"
+    },
+    "Key":{
+      "required": false,
+      "type": "string",
+      "default": "",
+      "hidden":true
+    },
+    "Advanced": {
+      "existingCert": {
+        "required": true,
+        "type": "bool",
+        "default": false
+      },
+      "certData": {
+        "customCert": {
+          "required": false,
+          "type": "file",
+          "default": "",
+          "if": "Advanced|existingCert"
+        },
+        "customKey": {
+          "required": false,
+          "type": "file",
+          "default": "",
+          "if": "Advanced|existingCert"
+        }
+      },
+      "registerPath": {
+        "required": true,
+        "type": "string",
+        "default": "login"
+      },
+      "checkinPath": {
+        "required": true,
+        "type": "string",
+        "default": "index"
+      },
+      "modulePath": {
+        "required": true,
+        "type": "string",
+        "default": "profile"
+      },
+      "pivotPath": {
+        "required": true,
+        "type": "string",
+        "default": "settings"
+      }
+    },
+    "AgentOptions": {
+      "Delay": {
+        "required": true,
+        "type": "string",
+        "default": "10.0"
+      },
+      "Jitter": {
+        "required": true,
+        "type": "string",
+        "default": "0.1"
+      },
+      "Eol": {
+        "required": false,
+        "type": "string",
+        "default": ""
+      },
+      "LiveHours": {
+        "required": false,
+        "type": "string",
+        "default": ""
+      }
+    },
+    "CompileOptions":{
+      "Obfuscated": {
+        "required": true,
+        "type": "bool",
+        "default": false
+      },
+      "Windows": {
+        "required": true,
+        "type": "bool",
+        "default": true
+      },
+      "Linux": {
+        "required": true,
+        "type": "bool",
+        "default": true
+      },
+      "Darwin": {
+        "required": true,
+        "type": "bool",
+        "default": true
+      }, 
+      "Android": {
+        "required": true,
+        "type": "bool",
+        "default": false
+      }
+    }
+  },
+  "QUIC": {
+    "Name": {
+      "required": true,
+      "type": "string",
+      "default": "QuicListener"
+    },
+    "Port": {
+      "required": true,
+      "type": "string",
+      "default": "4443"
+    },
+    "Host": {
+      "required": true,
+      "type": "string",
+      "default": "127.0.0.1"
+    },
+    "Key":{
+      "required": false,
+      "type": "string",
+      "default": "",
+      "hidden":true
+    },
+    "Advanced": {
+      "existingCert": {
+        "required": true,
+        "type": "bool",
+        "default": false
+      },
+      "certData": {
+        "customCert": {
+          "required": false,
+          "type": "file",
+          "default": "",
+          "if": "Advanced|existingCert"
+        },
+        "customKey": {
+          "required": false,
+          "type": "file",
+          "default": "",
+          "if": "Advanced|existingCert"
+        }
+      },
+      "registerPath": {
+        "required": true,
+        "type": "string",
+        "default": "login"
+      },
+      "checkinPath": {
+        "required": true,
+        "type": "string",
+        "default": "index"
+      },
+      "modulePath": {
+        "required": true,
+        "type": "string",
+        "default": "profile"
+      },
+      "pivotPath": {
+        "required": true,
+        "type": "string",
+        "default": "settings"
+      }
+    },
+    "AgentOptions": {
+      "Delay": {
+        "required": true,
+        "type": "string",
+        "default": "10.0"
+      },
+      "Jitter": {
+        "required": true,
+        "type": "string",
+        "default": "0.1"
+      },
+      "Eol": {
+        "required": false,
+        "type": "string",
+        "default": ""
+      },
+      "LiveHours": {
+        "required": false,
+        "type": "string",
+        "default": ""
+      }
+    },
+    "CompileOptions":{
+      "Obfuscated": {
+        "required": true,
+        "type": "bool",
+        "default": false
+      },
+      "Windows": {
+        "required": true,
+        "type": "bool",
+        "default": true
+      },
+      "Linux": {
+        "required": true,
+        "type": "bool",
+        "default": true
+      },
+      "Darwin": {
+        "required": true,
+        "type": "bool",
+        "default": true
+      }, 
+      "Android": {
+        "required": true,
+        "type": "bool",
+        "default": false
+      }
+    }
+  },
+  "TCP": {
+    "Name": {
+      "required": true,
+      "type": "string",
+      "default": "tcpListener"
+    },
+    "Port": {
+      "required": true,
+      "type": "number",
+      "default": "4444"
+    },
+    "Host": {
+      "required": true,
+      "type": "string",
+      "default": "c2server.domain"
+    },
+    "Key":{
+      "required": false,
+      "type": "string",
+      "default": "",
+      "hidden":true
+    },
+    "Advanced": {},
+    "AgentOptions": {
+      "Delay": {
+        "required": true,
+        "type": "float",
+        "default": "10.0"
+      },
+      "Jitter": {
+        "required": true,
+        "type": "float",
+        "default": "0.1"
+      },
+      "Eol": {
+        "required": false,
+        "type": "string",
+        "default": ""
+      },
+      "LiveHours": {
+        "required": false,
+        "type": "string",
+        "default": ""
+      }
+    },
+    "CompileOptions":{
+      "Obfuscated": {
+        "required": true,
+        "type": "bool",
+        "default": false
+      },
+      "Windows": {
+        "required": true,
+        "type": "bool",
+        "default": true
+      },
+      "Linux": {
+        "required": true,
+        "type": "bool",
+        "default": true
+      },
+      "Darwin": {
+        "required": true,
+        "type": "bool",
+        "default": true
+      }, 
+      "Android": {
+        "required": true,
+        "type": "bool",
+        "default": false
+      }
+    }
+  },
+  "DoH": {
+    "Name": {
+      "required": true,
+      "type": "string",
+      "default": "DoHListener"
+    },
+    "Port": {
+      "required": true,
+      "type": "number",
+      "default": "53"
+    },
+    "Host": {
+      "required": true,
+      "type": "string",
+      "default": "c2server.domain"
+    },
+    "Key":{
+      "required": false,
+      "type": "string",
+      "default": "",
+      "hidden":true
+    },
+    "Advanced": {    
+      "firsttime": {
+        "required": true,
+        "type": "string",
+        "default": "getname"
+    },
+    "checkin": {
+      "required": true,
+      "type": "string",
+      "default": "checkin"
+  },
+  "successResponse": {
+    "required": true,
+    "type": "string",
+    "default": "1.1.1.1"
+},
+"failureResponse": {
+  "required": true,
+  "type": "string",
+  "default": "1.1.1.2"
+},
+"jobExists": {
+  "required": true,
+  "type": "string",
+  "default": "8.8.8.8"
+}
+  },
+    "AgentOptions": {
+      "Delay": {
+        "required": true,
+        "type": "float",
+        "default": "10.0"
+      },
+      "Jitter": {
+        "required": true,
+        "type": "float",
+        "default": "0.1"
+      },
+      "Eol": {
+        "required": false,
+        "type": "string",
+        "default": ""
+      },
+      "LiveHours": {
+        "required": false,
+        "type": "string",
+        "default": ""
+      }
+    },
+    "CompileOptions":{
+      "Obfuscated": {
+        "required": true,
+        "type": "bool",
+        "default": false
+      },
+      "Windows": {
+        "required": true,
+        "type": "bool",
+        "default": true
+      },
+      "Linux": {
+        "required": true,
+        "type": "bool",
+        "default": true
+      },
+      "Darwin": {
+        "required": true,
+        "type": "bool",
+        "default": true
+      }, 
+      "Android": {
+        "required": true,
+        "type": "bool",
+        "default": false
+      }
+    }
+  },
+  "PIVOTTCP": {
+    "Name": {
+      "required": true,
+      "type": "string",
+      "default": "Pivtest"
+    },
+    "Key": {
+      "required": true,
+      "type": "agent",
+      "default": ""
+    },
+    "Port": {
+      "required": true,
+      "type": "number",
+      "default": "10000"
+    },
+    "Host": {
+      "required": true,
+      "type": "string",
+      "default": "127.0.0.1"
+    },   
+    "Advanced": {},
+    "AgentOptions": {
+      "Delay": {
+        "required": true,
+        "type": "float",
+        "default": "10.0"
+      },
+      "Jitter": {
+        "required": true,
+        "type": "float",
+        "default": "0.1"
+      },
+      "Eol": {
+        "required": false,
+        "type": "string",
+        "default": ""
+      },
+      "LiveHours": {
+        "required": false,
+        "type": "string",
+        "default": ""
+      }
+    },
+    "CompileOptions":{
+      "Obfuscated": {
+        "required": true,
+        "type": "bool",
+        "default": false
+      },
+      "Windows": {
+        "required": true,
+        "type": "bool",
+        "default": true
+      },
+      "Linux": {
+        "required": true,
+        "type": "bool",
+        "default": true
+      },
+      "Darwin": {
+        "required": true,
+        "type": "bool",
+        "default": true
+      }, 
+      "Android": {
+        "required": true,
+        "type": "bool",
+        "default": false
+      }
+    }
+  }
+}

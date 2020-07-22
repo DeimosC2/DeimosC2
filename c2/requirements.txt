@@ -1,0 +1,5 @@
+go get github.com/satori/go.uuid
+go get github.com/kbinani/screenshot
+go get github.com/gorilla/websocket
+
+mingw-x64 -> this is for compiling C and DLLs directly on Windows

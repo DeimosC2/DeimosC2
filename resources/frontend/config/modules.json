@@ -1,0 +1,56 @@
+{
+    "screengrab":{
+        "OS": ["windows","linux","darwin"],
+        "Server": true,
+        "Arguments": {},
+        "RunType": ["drop"],
+        "Info": "Screengrab will return a screenshot for each screen the user has",
+        "Example": "module drop screengrab",
+        "ModuleType": "collection"
+    },
+    "minidump":{
+        "OS": ["windows"],
+        "Server": true,
+        "Arguments": {"pid":""},
+        "RunType": ["drop"],
+        "Info": "Minidump will get a minidump of the given process's memory",
+        "Example": "module drop minidump <pid>",
+        "ModuleType": "credentialaccess"
+    },
+    "shadowdump":{
+        "OS": ["linux"],
+        "Server": true,
+        "Arguments": {"pid":""},
+        "RunType": ["drop"],
+        "Info": "ShadowDump will grab the /etc/passwd and /etc/shadow files and format them to a hashcat crackable file",
+        "Example": "module drop shadowdump",
+        "ModuleType": "credentialaccess"
+    },
+    "lsadump":{
+        "OS": ["windows"],
+        "Server": true,
+        "Arguments": {"pid":""},
+        "RunType": ["drop"],
+        "Info": "LSADump will grab the SYSTEM and SECURITY hive files and then extract the LSA Secrets from them",
+        "Example": "module drop lsadump",
+        "ModuleType": "credentialaccess"
+    },
+    "ntdsdump":{
+        "OS": ["windows"],
+        "Server": true,
+        "Arguments": {"pid":""},
+        "RunType": ["drop"],
+        "Info": "NTDSDump will dump the ntds.dit file using the VSS method",
+        "Example": "module drop ntdsdump",
+        "ModuleType": "credentialaccess"
+    },
+    "samdump":{
+        "OS": ["windows"],
+        "Server": true,
+        "Arguments": {"pid":""},
+        "RunType": ["drop"],
+        "Info": "SAMDump will grab the SYSTEM, SAM, and SECURITY hive files and then extract hashes from them",
+        "Example": "module drop samdump",
+        "ModuleType": "credentialaccess"
+    }
+}

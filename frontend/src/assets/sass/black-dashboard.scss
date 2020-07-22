@@ -1,0 +1,266 @@
+
+/*
+ =========================================================
+ * Vue Black Dashboard - v1.1.0
+ =========================================================
+
+ * Product Page: https://www.creative-tim.com/product/black-dashboard
+ * Copyright 2019 Creative Tim (http://www.creative-tim.com)
+
+ =========================================================
+
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+ */
+
+ // Core
+
+@import "black-dashboard/custom/functions";
+@import "black-dashboard/bootstrap/functions";
+@import "black-dashboard/bootstrap/variables";
+
+@import "black-dashboard/custom/mixins";
+@import "black-dashboard/bootstrap/mixins";
+
+ // Bootstrap components
+
+@import "black-dashboard/bootstrap/root";
+@import "black-dashboard/bootstrap/reboot";
+@import "black-dashboard/bootstrap/type";
+@import "black-dashboard/bootstrap/images";
+@import "black-dashboard/bootstrap/code";
+@import "black-dashboard/bootstrap/grid";
+@import "black-dashboard/bootstrap/tables";
+@import "black-dashboard/bootstrap/forms";
+@import "black-dashboard/bootstrap/buttons";
+@import "black-dashboard/bootstrap/transitions";
+@import "black-dashboard/bootstrap/dropdown";
+@import "black-dashboard/bootstrap/button-group";
+@import "black-dashboard/bootstrap/input-group";
+@import "black-dashboard/bootstrap/custom-forms";
+@import "black-dashboard/bootstrap/nav";
+@import "black-dashboard/bootstrap/navbar";
+@import "black-dashboard/bootstrap/card";
+@import "black-dashboard/bootstrap/breadcrumb";
+@import "black-dashboard/bootstrap/pagination";
+@import "black-dashboard/bootstrap/badge";
+@import "black-dashboard/bootstrap/jumbotron";
+@import "black-dashboard/bootstrap/alert";
+@import "black-dashboard/bootstrap/progress";
+@import "black-dashboard/bootstrap/media";
+@import "black-dashboard/bootstrap/list-group";
+@import "black-dashboard/bootstrap/close";
+@import "black-dashboard/bootstrap/modal";
+@import "black-dashboard/bootstrap/tooltip";
+@import "black-dashboard/bootstrap/popover";
+@import "black-dashboard/bootstrap/carousel";
+@import "black-dashboard/bootstrap/utilities";
+@import "black-dashboard/bootstrap/print";
+
+ // Custom components
+
+ @import "black-dashboard/custom/alerts.scss";
+ @import "black-dashboard/custom/buttons.scss";
+ @import "black-dashboard/custom/dropdown.scss";
+ @import "black-dashboard/custom/footer.scss";
+ @import "black-dashboard/custom/forms.scss";
+ @import "black-dashboard/custom/images.scss";
+ @import "black-dashboard/custom/modal.scss";
+ @import "black-dashboard/custom/navbar.scss";
+ @import "black-dashboard/custom/type.scss";
+ @import "black-dashboard/custom/tables";
+ @import "black-dashboard/custom/checkboxes-radio";
+ @import "black-dashboard/custom/fixed-plugin";
+ @import "black-dashboard/custom/sidebar-and-main-panel.scss";
+ @import "black-dashboard/custom/misc.scss";
+ @import "black-dashboard/custom/rtl.scss";
+ @import "black-dashboard/custom/input-group.scss";
+
+
+ // Vendor / Plugins
+
+@import "black-dashboard/custom/vendor/plugin-perfect-scrollbar.scss";
+@import "black-dashboard/custom/vendor/plugin-animate-bootstrap-notify.scss";
+
+// light mode
+
+@import "black-dashboard/custom/white-content.scss";
+
+// Cards
+
+@import 'black-dashboard/custom/card';
+@import "black-dashboard/custom/cards/card-chart";
+@import "black-dashboard/custom/cards/card-map";
+@import "black-dashboard/custom/cards/card-user";
+@import "black-dashboard/custom/cards/card-task";
+@import "black-dashboard/custom/cards/card-plain";
+
+
+.panel {
+ background-color: $panel-border-color;
+ padding: 3px;
+}
+.panel-button {
+ width: 16px;
+ height: 16px;
+}
+
+.panel.panel-expand {
+ position: fixed;
+ top: 0;
+ left: 0;
+ right: 0;
+ bottom: 0;
+ margin: 0;
+ overflow: hidden;
+ z-index: 1080;
+ display: -webkit-box;
+ display: -ms-flexbox;
+ display: flex;
+ -webkit-box-flex: 1;
+ -ms-flex: 1;
+ flex: 1;
+ -webkit-box-orient: vertical;
+ -webkit-box-direction: normal;
+ -ms-flex-direction: column;
+ flex-direction: column;
+ border-radius: 0;
+}
+
+.term {
+ background-color: $term-background-color;
+}
+
+.term-form {
+ height: 40vh;
+ width: 100%;
+ overflow: scroll;
+ color: $white;
+ background: #000;
+}
+
+.panel-expand .term-form {
+ height: 82vh;
+}
+
+.switches {
+ background-color: #000;
+ color: $white;
+ border: none;
+}
+
+@media (min-width: 576px) {
+ .base-modal {
+  max-width: 50% !important;
+ }
+}
+
+@media (max-width: 575px) {
+ .base-modal {
+  max-width: 85% !important;
+  margin-top: 25%;
+ }
+}
+.base-modal .modal-content {
+ background-color: $term-background-color;
+ color: rgba($white, .7);
+ box-shadow: 0 5px 35px 2px rgba($vue-states, 0.175);
+ .form-control {
+  border-color: rgba($white, .7);
+ }
+}
+.modal.show .modal-dialog {
+ -webkit-transform: unset !important;
+ transform: unset !important;
+}
+.modal-header {
+ -webkit-transform: translate(0, 10%);
+ transform: translate(0, 10%);
+}
+
+.mfa .card-image {
+ background-color: #fff;
+}
+
+@media (max-width: 768px) {
+ .hide-on-mobile {
+  display: none;
+ }
+}
+
+@media (min-width: 768px) {
+ .hide-on-fullscreen {
+  display: none;
+ }
+}
+
+@media (max-width: 768px) {
+ .action-button {
+  line-height: 1.35;
+  font-size: 0.875rem;
+  border-radius: 0.2857rem;
+  padding: 5px 15px;
+ }
+}
+
+hr {
+ background-color: $table-caption-color;
+}
+
+.comment {
+ color: $table-head-bg;
+ display: table;
+ background: $card-black-background;
+ margin-bottom: 30px;
+ box-shadow: $box-shadow;
+ padding: 15px;
+ border-radius: 15px;
+}
+
+.my-comment .comment {
+ background: $card-gray-background;
+}
+
+.comment-arrow-left {
+ content: ' ';
+ height: 0;
+ width: 0;
+ border: 10px solid transparent;
+ border-right-color: $card-black-background;
+ margin-top: 12px;
+}
+
+.comment-arrow-right {
+ content: ' ';
+ height: 0;
+ width: 0;
+ border: 10px solid transparent;
+ border-left-color: $card-gray-background;
+ margin-top: 12px;
+}
+
+.comment-block {
+ display: flex;
+}
+
+.comment-name {
+ padding-top: 12px;
+}
+
+.my-comment {
+ display: flex;
+ flex-direction: row-reverse;
+}
+
+.pivot-item {
+ min-width: 250px;
+}
+
+.sort-caret-top {
+ margin: 5px 0 0 !important;
+ padding: 0;
+}
+.sort-caret-bottom {
+ margin: 0 0 5px !important;
+ padding: 0;
+}
