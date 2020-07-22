@@ -29,7 +29,7 @@ DeimosC2 is a post-exploitation Command & Control (C2) tool that leverages multi
 * Websocket API Calls
 
 ## Getting Started and Help
-You can download the latest [release](https://github.com/DeimosC2/DeimosC2/releases) and view the [release](https://github.com/DeimosC2/DeimosC2/wiki) for any assistance getting started or running the C2.
+You can download the latest [release](https://github.com/DeimosC2/DeimosC2/releases) and view the [wiki](https://github.com/DeimosC2/DeimosC2/wiki) for any assistance getting started or running the C2.
 
 ## Submitting Issues
 We welcome issues to be opened to help improve this project and keep it going. For bugs please use the [template](.github/ISSUE_TEMPLATE/bug_report.md).
