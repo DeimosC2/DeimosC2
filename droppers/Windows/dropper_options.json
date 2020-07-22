@@ -1,0 +1,8 @@
+{
+    "uac_methods": {
+        "method_1": "method 1 goes here"
+    },
+    "trusted_paths": {
+        "path_1": "C:\\blah"
+    }
+ }

@@ -1,0 +1,19 @@
+@import "themes/red_variables";
+@import "black-dashboard";
+
+.dropdown-menu {
+.dropdown-item:not(.notLink),
+.bootstrap-select &.inner li a {
+  &:hover,
+  &:focus {
+    background-color: $vue-states;
+    color: $white
+  }
+}
+  .notLink {
+    color: $vue-states;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: $font-weight-bold;
+  }
+}
