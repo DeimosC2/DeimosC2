@@ -42,10 +42,13 @@ We welcome issues to be opened to help improve this project and keep it going. F
 
 ## Credits
 In order to develop this we used some of the awesome work of others. Below is a list of those we either used their code or were inspired by. If we missed you please let us know so we can add your name!
-* [lsassy](https://github.com/Hackndo/lsassy) by [@hackndo](https://twitter.com/HackAndDo) used for some Windows modules
+* [lsassy](https://github.com/Hackndo/lsassy) by [@HackAndDo](https://twitter.com/HackAndDo) used for some Windows modules
 * [goDoH](https://github.com/sensepost/goDoH) by [@leonjza](https://twitter.com/leonjza) from SensePost used for DoH
 * [BishopFox Sliver](https://github.com/BishopFox/sliver) used in some places as they already did a fanstastic job
 * [Merlin](https://github.com/Ne0nd0g/merlin) used for reflective DLLs support
 * [dgoogauth](https://github.com/dgryski/dgoogauth) used for the 2FA functionality
 * [gobfuscate](https://github.com/unixpickle/gobfuscate) used to support agent obfuscation
 * [Stack Overflow](https://stackoverflow.com/) because isn't this how we develop now?
+
+## Disclaimer
+This program should only be used on environments that you own or have explicit permission to do so. The authors, nor Critical Start, Inc., will be held liable for any illegal use of this program.
