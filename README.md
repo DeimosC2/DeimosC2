@@ -49,3 +49,6 @@ In order to develop this we used some of the awesome work of others. Below is a 
 * [dgoogauth](https://github.com/dgryski/dgoogauth) used for the 2FA functionality
 * [gobfuscate](https://github.com/unixpickle/gobfuscate) used to support agent obfuscation
 * [Stack Overflow](https://stackoverflow.com/) because isn't this how we develop now?
+
+## Disclaimer
+This program should only be used on environments that you own or have explicit permission to do so. The authors, nor Critical Start, Inc., will be held liable for any illegal use of this program.
