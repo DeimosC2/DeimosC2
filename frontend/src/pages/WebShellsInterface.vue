@@ -30,7 +30,7 @@ export default {
   computed: {
     agent() {
       return {
-        Name: this.shell.UUID,
+        Key: this.shell.UUID,
         Username: this.shell.Username,
         Hostname: this.shell.Hostname,
         OS: this.shell.OS,
