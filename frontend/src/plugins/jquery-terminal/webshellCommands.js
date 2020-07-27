@@ -10,7 +10,11 @@ export default class commands {
   #usage = {
     cmd: {
       help: `  Usage: cmd <command>
-  Execute a CMD (or shell) command through the web shell`
+  Execute a CMD command through the web shell`
+    },
+    shell: {
+      help: `  Usage: cmd <command>
+  Execute a shell command through the web shell`
     },
     power: {
       help: `  Usage: power <command>
@@ -31,17 +35,28 @@ export default class commands {
   }
 
   cmd(args) {
+    let action = args._.shift();
     const data = {
       UUID: this.uuid,
-      Options: args._
+      Options: [action, args._.join(" ")]
+    };
+    return store.dispatch("webShells/sendJob", data);
+  }
+
+  shell(args) {
+    let action = args._.shift();
+    const data = {
+      UUID: this.uuid,
+      Options: [action, args._.join(" ")]
     };
     return store.dispatch("webShells/sendJob", data);
   }
 
   power(args) {
+    let action = args._.shift();
     const data = {
       UUID: this.uuid,
-      Options: args._
+      Options: [action, args._.join(" ")]
     };
     return store.dispatch("webShells/sendJob", data);
   }
