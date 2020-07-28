@@ -8,6 +8,7 @@
       :mobileColumns="mobileHeaders"
       class="table-responsive-sm"
       style="table-layout:fixed;"
+      type="loot"
     >
     </base-table>
   </div>
