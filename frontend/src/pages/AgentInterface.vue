@@ -76,10 +76,18 @@
           </div>
         </div>
         <div class="tab-pane" :class="{ active: activeTab === 'loot' }">
-          <LootTable :agent-name="agent.Key" />
+          <div class="card card-task">
+            <div class="card-body">
+              <LootTable :agent-key="agent.Key" v-if="activeTab === 'loot'" />
+            </div>
+          </div>
         </div>
         <div class="tab-pane" :class="{ active: activeTab === 'lootFiles' }">
-          <LootFiles v-if="activeTab === 'lootFiles'" :agent="agent.Key" />
+          <div class="card card-task">
+            <div class="card-body">
+              <LootFiles v-if="activeTab === 'lootFiles'" :agent="agent.Key" />
+            </div>
+          </div>
         </div>
         <div class="tab-pane" :class="{ active: activeTab === 'comments' }">
           <Comments :agent="agent.Key" />
