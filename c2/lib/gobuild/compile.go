@@ -134,7 +134,6 @@ func Init(lType string, lName string, pubKey []byte, host string, port string, d
 			}
 			//Options for Domain Hiding
 			if m["domainHiding"].(bool) {
-				logging.Logger.Println("Domain Hiding is set to: ", m["domainHiding"].(bool))
 				output = strings.Replace(string(output), "{{HOST}}", strings.TrimSpace(m["frontDomainIP"].(string)), -1)
 				output = strings.Replace(string(output), "{{PORT}}", strings.TrimSpace(m["frontDomainPort"].(string)), -1)
 				output = strings.Replace(string(output), "{{HIDDEN_CRYPT}}", strings.TrimSpace("\"github.com/SixGenInc/Noctilucent/tls\""), -1)
