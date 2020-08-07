@@ -144,6 +144,7 @@ func Init(lType string, lName string, pubKey []byte, host string, port string, d
 				output = strings.Replace(string(output), "{{HIDDEN_ACTDOMAIN}}", strings.TrimSpace("var actualDomain = \""+m["actualDomain"].(string)+"\""), -1)
 				output = strings.Replace(string(output), "{{HIDDEN_ESNI_IMPORT}}", strings.TrimSpace("\"github.com/DeimosC2/DeimosC2/agents/resources/domainhiding\""), -1)
 				output = strings.Replace(string(output), "{{HIDDEN_HTTPCLIENT}}", strings.TrimSpace("var httpClient *http.Client"), -1)
+				output = strings.Replace(string(output), "{{HIDDEN_HTTP_POST_CALL}}", strings.TrimSpace("httpClient"), -1)
 			} else {
 				output = strings.Replace(string(output), "{{HOST}}", strings.TrimSpace(host), -1)
 				output = strings.Replace(string(output), "{{PORT}}", strings.TrimSpace(port), -1)
@@ -154,6 +155,7 @@ func Init(lType string, lName string, pubKey []byte, host string, port string, d
 				output = strings.Replace(string(output), "{{HIDDEN_ACTDOMAIN}}", strings.TrimSpace(""), -1)
 				output = strings.Replace(string(output), "{{HIDDEN_ESNI_IMPORT}}", strings.TrimSpace(""), -1)
 				output = strings.Replace(string(output), "{{HIDDEN_HTTPCLIENT}}", strings.TrimSpace(""), -1)
+				output = strings.Replace(string(output), "{{HIDDEN_HTTP_POST_CALL}}", strings.TrimSpace("http"), -1)
 			}
 			output = strings.Replace(string(output), "{{FIRSTTIME}}", strings.TrimSpace(m["registerPath"].(string)), -1)
 			output = strings.Replace(string(output), "{{CHECKIN}}", strings.TrimSpace(m["checkinPath"].(string)), -1)

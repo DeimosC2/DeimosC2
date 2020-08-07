@@ -33,7 +33,9 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
+	"log"
 	"math/rand"
 	"net/http"
 	"strings"
@@ -100,30 +102,43 @@ func shuffle(src []string) []string {
 	return final
 }
 
-//QueryESNIKeysForHostDoH attempts to find ESNI keys
+// For cleaner logging
+type logWriter struct {
+}
+
+func (writer logWriter) Write(bytes []byte) (int, error) {
+	return fmt.Print(string(bytes))
+}
+
 func QueryESNIKeysForHostDoH(hostname string, insecureSkipVerify bool) ([]byte, error) {
+	log.SetFlags(0)
+	log.SetOutput(new(logWriter))
 	myResolvers := shuffle(resolvers)
 	for _, resolverTarget := range myResolvers {
+		//fmt.Println("[+] Using resolver: " + resolverTarget)
 		response, err := BaseRequest(resolverTarget, "_esni."+hostname, "TXT", insecureSkipVerify)
 		if err != nil {
-			//log.Printf("[E] Error: %v", err)
+			log.Printf("[E] Error: %v", err)
 			// Try the next resolver
 			continue
 		}
 		var responseJson DNSResponse
+		// log.Println(response)
 		json.Unmarshal([]byte(response), &responseJson)
 		if len(responseJson.Answer) == 0 {
 			return nil, errors.New("got no data from DNS query")
 		}
 		data := trimQuotes(responseJson.Answer[0].Data)
+		// log.Println(data)
 		dataBytes, err := base64.StdEncoding.DecodeString(data)
 		if err != nil && strings.HasPrefix(err.Error(), "illegal base64 data") {
-			//log.Printf("[!] Could not decode response, possible CNAME")
+			log.Printf("[!] Could not decode response, possible CNAME")
 			return QueryESNIKeysForHostDoH("cloudflare.com", insecureSkipVerify) // All CF domains use the same key, worth a shot
 		} else if err != nil {
-			//log.Printf("[E] Error: %v", err)
+			log.Printf("[E] Error: %v", err)
 
 		} else {
+			// log.Println(dataBytes)
 			return dataBytes, nil
 		}
 	}
@@ -132,6 +147,8 @@ func QueryESNIKeysForHostDoH(hostname string, insecureSkipVerify bool) ([]byte, 
 
 // BaseRequest makes a DNS over HTTP (DOH) GET request for a specified query
 func BaseRequest(server, query, qtype string, insecureSkipVerify bool) (string, error) {
+	//encquery := base64.StdEncoding.EncodeToString([]byte(query))
+	//encquery = url.QueryEscape(encquery)
 	qurl := server + "?name=" + query + "&type=" + qtype
 	tr := &http.Transport{
 		TLSClientConfig:     &tls.Config{InsecureSkipVerify: insecureSkipVerify},
@@ -140,8 +157,16 @@ func BaseRequest(server, query, qtype string, insecureSkipVerify bool) (string, 
 	client := &http.Client{Transport: tr}
 	req, _ := http.NewRequest("GET", qurl, nil)
 	req.Header.Set("accept", "application/dns-json")
-	res, _ := client.Do(req)
+	res, err := client.Do(req)
+	if err != nil {
+		log.Printf("[E] Error getting the url")
+		return "", err
+	}
 	defer res.Body.Close()
-	body, _ := ioutil.ReadAll(res.Body)
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Printf("[E] Error getting the url")
+		return "", err
+	}
 	return string(body), nil
 }

