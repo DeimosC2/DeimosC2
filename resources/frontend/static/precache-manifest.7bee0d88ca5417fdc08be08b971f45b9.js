@@ -8,12 +8,12 @@ self.__precacheManifest = [
     "url": "/js/admin.87f110b8.js"
   },
   {
-    "revision": "6f081f3741a67ff71720",
+    "revision": "39ca59ea314e49818588",
     "url": "/css/app.28f166a4.css"
   },
   {
-    "revision": "6f081f3741a67ff71720",
-    "url": "/js/app.a3127406.js"
+    "revision": "39ca59ea314e49818588",
+    "url": "/js/app.f3ef7c07.js"
   },
   {
     "revision": "29fc1f00f7b7682b9812",
@@ -112,16 +112,16 @@ self.__precacheManifest = [
     "url": "/img/fa-solid-900.48685310.svg"
   },
   {
-    "revision": "03ef1918e505c3e3471f9369ef7a638f",
-    "url": "/fonts/nucleo.03ef1918.eot"
-  },
-  {
     "revision": "5987dd12fea78ce5f97ae601b08ec03c",
     "url": "/fonts/nucleo.5987dd12.woff2"
   },
   {
     "revision": "f0b489a5dbbff08833d21024f9fcbd4e",
     "url": "/fonts/nucleo.f0b489a5.woff"
+  },
+  {
+    "revision": "03ef1918e505c3e3471f9369ef7a638f",
+    "url": "/fonts/nucleo.03ef1918.eot"
   },
   {
     "revision": "b17a118e13e53558658b681a0ebdad82",
@@ -148,16 +148,16 @@ self.__precacheManifest = [
     "url": "/fonts/poppins-v9-latin-regular.1a280523.woff2"
   },
   {
+    "revision": "46a7d48240d428c9dc3d4ff579199312",
+    "url": "/fonts/poppins-v9-latin-regular.46a7d482.woff"
+  },
+  {
     "revision": "61e2d96d01a7eba5ea3ec1bad7e736a8",
     "url": "/fonts/poppins-v9-latin-500.61e2d96d.woff2"
   },
   {
     "revision": "1372de09cfc3e9a62af4234fd331e8e9",
     "url": "/fonts/poppins-v9-latin-500.1372de09.woff"
-  },
-  {
-    "revision": "46a7d48240d428c9dc3d4ff579199312",
-    "url": "/fonts/poppins-v9-latin-regular.46a7d482.woff"
   },
   {
     "revision": "aa4405ed937295296cf8510f437628e0",
@@ -184,7 +184,7 @@ self.__precacheManifest = [
     "url": "/fonts/poppins-v9-latin-800.bde99287.woff"
   },
   {
-    "revision": "0027d16be279d3cbe2e2ecb1017934e4",
+    "revision": "fcad15c1485fc4e92b5f924af85747e4",
     "url": "/index.html"
   },
   {
@@ -204,12 +204,12 @@ self.__precacheManifest = [
     "url": "/img/apple-icon.png"
   },
   {
-    "revision": "9b0c49b657dd738a77a37e7dabcc0b5d",
-    "url": "/img/bg5.jpg"
-  },
-  {
     "revision": "d25412bcd9af1fb98017c8144a4e40d1",
     "url": "/img/default-avatar.png"
+  },
+  {
+    "revision": "9b0c49b657dd738a77a37e7dabcc0b5d",
+    "url": "/img/bg5.jpg"
   },
   {
     "revision": "fadc3f3a4c94b151d8b8ed33456c2344",

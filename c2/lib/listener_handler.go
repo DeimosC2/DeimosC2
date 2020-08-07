@@ -356,7 +356,6 @@ func ParseSocket(fname string, data interface{}, ws *websocket.Conn, userID stri
 	cOptions := m["CompileOptions"].(map[string]interface{})
 
 	var gooses []string
-
 	var obfuscation bool
 
 	for x, y := range cOptions {
