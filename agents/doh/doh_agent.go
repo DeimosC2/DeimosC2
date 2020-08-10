@@ -50,7 +50,6 @@ var eol = "{{EOL}}"          //Time to die, Format: 2019-06-30
 var liveHours = "{{LIVEHOURS}}"    //Times of the day this can operate, Format: 05:00-21:00
 var stringPubKey = `{{PUBKEY}}`
 
-//var domain = "doj.network" //Domain to be used for DNS stuff
 var firsttime = "{{FIRSTTIME}}" 
 var checkin = "{{CHECKIN}}"  
 var aesKey []byte

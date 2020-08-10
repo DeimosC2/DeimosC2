@@ -49,6 +49,7 @@ In order to develop this we used some of the awesome work of others. Below is a 
 * [dgoogauth](https://github.com/dgryski/dgoogauth) used for the 2FA functionality
 * [gobfuscate](https://github.com/unixpickle/gobfuscate) used to support agent obfuscation
 * [Stack Overflow](https://stackoverflow.com/) because isn't this how we develop now?
+* [Bad Sector Labs](https://twitter.com/badsectorlabs) for their Domain Hiding technique using TLS 1.3, ESNI, and Cloudflare
 
 ## Disclaimer
 This program should only be used on environments that you own or have explicit permission to do so. Neither the authors, nor Critical Start, Inc., will be held liable for any illegal use of this program.
