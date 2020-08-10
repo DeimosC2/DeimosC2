@@ -24,9 +24,7 @@
         </div>
         <hr />
         <div class="text-white">
-          <pre>
-          {{ comment.Comment }}
-          </pre>
+          <pre>{{ comment.Comment }}</pre>
         </div>
       </div>
     </div>

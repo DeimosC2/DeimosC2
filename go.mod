@@ -5,15 +5,18 @@ go 1.13
 require (
 	github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802 // indirect
 	github.com/C-Sto/gosecretsdump v0.1.0
+	github.com/SixGenInc/Noctilucent v0.0.0-20200809195215-75d6b91122ed // indirect
 	github.com/aaronarduino/goqrsvg v0.0.0-20170617203649-603647895681
 	github.com/ajstarks/svgo v0.0.0-20200320125537-f189e35d30ca
 	github.com/boombuler/barcode v1.0.0
+	github.com/cloudflare/sidh v0.0.0-20190228162259-d2f0f90e08aa // indirect
 	github.com/gen2brain/shm v0.0.0-20180314170312-6c18ff7f8b90 // indirect
 	github.com/godoctor/godoctor v0.0.0-20181123222458-69df17f3a6f6 // indirect
 	github.com/gorilla/mux v1.7.3
 	github.com/gorilla/securecookie v1.1.1
 	github.com/gorilla/sessions v1.2.0
 	github.com/gorilla/websocket v1.4.1
+	github.com/henrydcase/nobs v0.0.0-20200516223741-2500d74484f2 // indirect
 	github.com/kbinani/screenshot v0.0.0-20190719135742-f06580e30cdc
 	github.com/lucas-clemente/quic-go v0.17.3
 	github.com/lxn/win v0.0.0-20190919090605-24c5960b03d8 // indirect

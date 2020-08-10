@@ -41,6 +41,29 @@
           "if": "Advanced|existingCert"
         }
       },
+      "domainHiding": {
+        "required": true,
+        "type": "bool",
+        "default": false
+      },
+      "frontDomainIP": {
+        "required": false,
+        "type": "string",
+        "default": "",
+        "if": "Advanced|domainHiding"
+      },
+      "frontDomainPort": {
+        "required": false,
+        "type": "string",
+        "default": "",
+        "if": "Advanced|domainHiding"
+      },
+      "actualDomain": {
+        "required": false,
+        "type": "string",
+        "default": "",
+        "if": "Advanced|domainHiding"
+      },
       "registerPath": {
         "required": true,
         "type": "string",

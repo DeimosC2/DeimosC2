@@ -14,6 +14,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/DeimosC2/DeimosC2/c2/agents/techniques/httpstechniques"
 	"github.com/DeimosC2/DeimosC2/c2/gobfuscate"
 	"github.com/DeimosC2/DeimosC2/c2/lib/validation"
 	"github.com/DeimosC2/DeimosC2/c2/webserver/websockets"
@@ -75,12 +76,14 @@ func Init(lType string, lName string, pubKey []byte, host string, port string, d
 		logging.ErrorLogger.Println(err.Error())
 	}
 
-	output := strings.Replace(string(input), "{{HOST}}", strings.TrimSpace(host), -1)
-	output = strings.Replace(string(output), "{{PORT}}", strings.TrimSpace(port), -1)
-	output = strings.Replace(string(output), "{{DELAY}}", strings.TrimSpace(delay), -1)
+	output := strings.Replace(string(input), "{{DELAY}}", strings.TrimSpace(delay), -1)
 	output = strings.Replace(string(output), "{{JITTER}}", strings.TrimSpace(jitter), -1)
 	output = strings.Replace(string(output), "{{EOL}}", strings.TrimSpace(eol), -1)
 	output = strings.Replace(string(output), "{{LIVEHOURS}}", strings.TrimSpace(livehours), -1)
+	if lType != "HTTPS" {
+		output = strings.Replace(string(output), "{{HOST}}", strings.TrimSpace(host), -1)
+		output = strings.Replace(string(output), "{{PORT}}", strings.TrimSpace(port), -1)
+	}
 	if lType != "DoH" {
 		output = strings.Replace(string(output), "{{PUBKEY}}", string(pubKey), -1)
 	} else {
@@ -90,13 +93,29 @@ func Init(lType string, lName string, pubKey []byte, host string, port string, d
 
 	if lType == "HTTPS" || lType == "QUIC" {
 		m := advanced.(map[string]interface{})
-		if !validation.ValidateMap(m, []string{"registerPath", "checkinPath", "modulePath", "pivotPath"}) {
-			return
+		if lType == "HTTPS" {
+			if !validation.ValidateMap(m, []string{"domainHiding", "frontDomainIP", "frontDomainPort", "actualDomain", "registerPath", "checkinPath", "modulePath", "pivotPath"}) {
+				return
+			}
+			//Options for Domain Hiding
+			if m["domainHiding"].(bool) {
+				output = httpstechniques.StageDomainHiddenCode(output, m["frontDomainIP"].(string), m["frontDomainPort"].(string), m["actualDomain"].(string))
+			} else {
+				output = httpstechniques.StageNormalCode(output, host, port)
+			}
+			output = strings.Replace(string(output), "{{FIRSTTIME}}", strings.TrimSpace(m["registerPath"].(string)), -1)
+			output = strings.Replace(string(output), "{{CHECKIN}}", strings.TrimSpace(m["checkinPath"].(string)), -1)
+			output = strings.Replace(string(output), "{{MODULELOC}}", strings.TrimSpace(m["modulePath"].(string)), -1)
+			output = strings.Replace(string(output), "{{PIVOTLOC}}", strings.TrimSpace(m["pivotPath"].(string)), -1)
+		} else {
+			if !validation.ValidateMap(m, []string{"registerPath", "checkinPath", "modulePath", "pivotPath"}) {
+				return
+			}
+			output = strings.Replace(string(output), "{{FIRSTTIME}}", strings.TrimSpace(m["registerPath"].(string)), -1)
+			output = strings.Replace(string(output), "{{CHECKIN}}", strings.TrimSpace(m["checkinPath"].(string)), -1)
+			output = strings.Replace(string(output), "{{MODULELOC}}", strings.TrimSpace(m["modulePath"].(string)), -1)
+			output = strings.Replace(string(output), "{{PIVOTLOC}}", strings.TrimSpace(m["pivotPath"].(string)), -1)
 		}
-		output = strings.Replace(string(output), "{{FIRSTTIME}}", strings.TrimSpace(m["registerPath"].(string)), -1)
-		output = strings.Replace(string(output), "{{CHECKIN}}", strings.TrimSpace(m["checkinPath"].(string)), -1)
-		output = strings.Replace(string(output), "{{MODULELOC}}", strings.TrimSpace(m["modulePath"].(string)), -1)
-		output = strings.Replace(string(output), "{{PIVOTLOC}}", strings.TrimSpace(m["pivotPath"].(string)), -1)
 	} else if lType == "DoH" {
 		m := advanced.(map[string]interface{})
 		if !validation.ValidateMap(m, []string{"firsttime", "checkin", "successResponse", "failureResponse", "jobExists"}) {

@@ -165,6 +165,8 @@ func main() {
 			zipPath, _ := userInput.ReadString('\n')
 			zipPath = strings.TrimSpace(zipPath)
 			archive.Replay(zipPath)
+			firstTime = false
+			reInitServer(dbPath)
 		} else {
 			logging.Logger.Println("It seems like this is your first time running.")
 			logging.Logger.Println("Would you like to initialize the DB and Webserver? [Y/N]")
