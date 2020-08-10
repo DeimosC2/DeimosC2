@@ -5,7 +5,7 @@ go 1.13
 require (
 	github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802 // indirect
 	github.com/C-Sto/gosecretsdump v0.1.0
-	github.com/SixGenInc/Noctilucent v0.0.0-20200806161827-afeb73214e50 // indirect
+	github.com/SixGenInc/Noctilucent v0.0.0-20200809195215-75d6b91122ed // indirect
 	github.com/aaronarduino/goqrsvg v0.0.0-20170617203649-603647895681
 	github.com/ajstarks/svgo v0.0.0-20200320125537-f189e35d30ca
 	github.com/boombuler/barcode v1.0.0

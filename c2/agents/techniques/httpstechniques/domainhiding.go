@@ -20,7 +20,6 @@ var (
 		PreserveSNI:        true,
 		ServerName:         frontDomain}
 
-	pubKey = []byte(stringPubKey)
 	var (
 		conn *tls.Conn
 	)

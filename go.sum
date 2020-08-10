@@ -14,6 +14,8 @@ github.com/C-Sto/gosecretsdump v0.1.0 h1:IGq+FQja9Az84DlZZBpmVPcnOw8SUEj7uwIQzpK
 github.com/C-Sto/gosecretsdump v0.1.0/go.mod h1:4u2KFhFC4OeiYJJntIchqrXDzsX8KXYXQtikakEXxd8=
 github.com/SixGenInc/Noctilucent v0.0.0-20200806161827-afeb73214e50 h1:2ETsHsp2HXkyF+nv1ubFyIUjkhEi3SrqR5r4NSPiWyc=
 github.com/SixGenInc/Noctilucent v0.0.0-20200806161827-afeb73214e50/go.mod h1:LeRr72Kj3YRyl7l+4OxncARd43KFAEGJ3uRojQNSxsg=
+github.com/SixGenInc/Noctilucent v0.0.0-20200809195215-75d6b91122ed h1:M9zl6QvVLqTvulVxUTvszliIp3siP6wIDCoIKC6gSsk=
+github.com/SixGenInc/Noctilucent v0.0.0-20200809195215-75d6b91122ed/go.mod h1:LeRr72Kj3YRyl7l+4OxncARd43KFAEGJ3uRojQNSxsg=
 github.com/aaronarduino/goqrsvg v0.0.0-20170617203649-603647895681 h1:eZrVcUgy0P6+B6Vu7SKPh3UZQS5nEuyjhbkFyfz7I2I=
 github.com/aaronarduino/goqrsvg v0.0.0-20170617203649-603647895681/go.mod h1:dytw+5qs+pdi61fO/S4OmXR7AuEq/HvNCuG03KxQHT4=
 github.com/ajstarks/svgo v0.0.0-20200320125537-f189e35d30ca h1:kWzLcty5V2rzOqJM7Tp/MfSX0RMSI1x4IOLApEefYxA=
