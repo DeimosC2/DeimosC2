@@ -94,12 +94,12 @@ func Init(lType string, lName string, pubKey []byte, host string, port string, d
 	if lType == "HTTPS" || lType == "QUIC" {
 		m := advanced.(map[string]interface{})
 		if lType == "HTTPS" {
-			if !validation.ValidateMap(m, []string{"domainHiding", "frontDomainIP", "frontDomainPort", "frontDomain", "actualDomain", "registerPath", "checkinPath", "modulePath", "pivotPath"}) {
+			if !validation.ValidateMap(m, []string{"domainHiding", "frontDomainIP", "frontDomainPort", "actualDomain", "registerPath", "checkinPath", "modulePath", "pivotPath"}) {
 				return
 			}
 			//Options for Domain Hiding
 			if m["domainHiding"].(bool) {
-				output = httpstechniques.StageDomainHiddenCode(output, m["frontDomainIP"].(string), m["frontDomainPort"].(string), m["frontDomain"].(string), m["actualDomain"].(string))
+				output = httpstechniques.StageDomainHiddenCode(output, m["frontDomainIP"].(string), m["frontDomainPort"].(string), m["actualDomain"].(string))
 			} else {
 				output = httpstechniques.StageNormalCode(output, host, port)
 			}

@@ -58,12 +58,6 @@
         "default": "",
         "if": "Advanced|domainHiding"
       },
-      "frontDomain": {
-        "required": false,
-        "type": "string",
-        "default": "",
-        "if": "Advanced|domainHiding"
-      },
       "actualDomain": {
         "required": false,
         "type": "string",

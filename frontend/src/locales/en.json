@@ -67,7 +67,6 @@
       "domainHiding": "Domain Hiding",
       "frontDomainIP": "Fronting Domain IP",
       "frontDomainPort": "Fronting Domain Port",
-      "frontDomain": "Fronting Domain Name",
       "actualDomain": "Actual Domain Name",
       "registerPath": "registerPath",
       "checkinPath": "checkinPath",

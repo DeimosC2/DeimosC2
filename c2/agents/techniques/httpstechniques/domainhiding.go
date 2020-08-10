@@ -17,8 +17,7 @@ var (
 		MinVersion:         tls.VersionTLS13, // Force TLS 1.3
 		MaxVersion:         tls.VersionTLS13,
 		ESNIServerName:     actualDomain,
-		PreserveSNI:        true,
-		ServerName:         frontDomain}
+		PreserveSNI:        false}
 
 	var (
 		conn *tls.Conn
@@ -41,8 +40,7 @@ var (
 	`
 
 	//Dynamic variables required for domain hiding (aligned left)
-	hiddenDynamicVariables string = `var frontDomain = "{{FRONTDOMAIN}}"
-var actualDomain = "{{ACTUALDOMAIN}}"
+	hiddenDynamicVariables string = `var actualDomain = "{{ACTUALDOMAIN}}"
 var httpClient *http.Client
 `
 
@@ -51,13 +49,13 @@ var httpClient *http.Client
 )
 
 //StageDomainHiddenCode will dynamically create the code for the requested technique
-func StageDomainHiddenCode(output string, frontDomainIP string, frontDomainPort string, frontDomain string, actualDomain string) string {
+func StageDomainHiddenCode(output string, frontDomainIP string, frontDomainPort string, actualDomain string) string {
 	//Start building the code
 	output = strings.Replace(string(output), "{{DYNAMIC_IMPORTS}}", hiddenImports, -1)
 	output = strings.Replace(string(output), "{{HOST}}", frontDomainIP, -1)
 	output = strings.Replace(string(output), "{{PORT}}", frontDomainPort, -1)
 
-	replaceVariables := strings.NewReplacer("{{FRONTDOMAIN}}", frontDomain, "{{ACTUALDOMAIN}}", actualDomain)
+	replaceVariables := strings.NewReplacer("{{ACTUALDOMAIN}}", actualDomain)
 	output = strings.Replace(string(output), "{{DYNAMIC_VARIABLES}}", replaceVariables.Replace(hiddenDynamicVariables), -1)
 
 	output = strings.Replace(string(output), "{{DYNAMIC_MAIN_CODE}}", hiddenCodeMain, -1)

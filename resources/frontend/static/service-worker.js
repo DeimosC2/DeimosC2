@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.7bee0d88ca5417fdc08be08b971f45b9.js"
+  "/precache-manifest.6399d6d7243cd04eb2c3d9fd6ddc62bd.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "deimos-c2"});
