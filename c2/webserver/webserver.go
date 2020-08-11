@@ -19,6 +19,7 @@ import (
 	"github.com/DeimosC2/DeimosC2/c2/agents"
 	"github.com/DeimosC2/DeimosC2/c2/lib"
 	"github.com/DeimosC2/DeimosC2/c2/lib/archive"
+	"github.com/DeimosC2/DeimosC2/c2/lib/logviewer"
 	"github.com/DeimosC2/DeimosC2/c2/lib/sqldb"
 	"github.com/DeimosC2/DeimosC2/c2/lib/validation"
 	"github.com/DeimosC2/DeimosC2/c2/loot"
@@ -213,6 +214,18 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 				//Checks if user is admin before allowing this API to run
 				if uID.Admin {
 					archive.ParseSocket(msg.FunctionName, msg.Data, ws)
+				} else {
+					msg := websockets.SendMessage{
+						Type:         "Error",
+						FunctionName: "",
+						Data:         "Unauthorized Access. Nice Try!",
+						Success:      false,
+					}
+					websockets.AlertSingleUser(msg, ws)
+				}
+			case "LogViewer":
+				if uID.Admin {
+					logviewer.ParseSocket(msg.FunctionName, msg.Data, ws)
 				} else {
 					msg := websockets.SendMessage{
 						Type:         "Error",
