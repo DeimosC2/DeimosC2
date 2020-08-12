@@ -7,6 +7,11 @@
     </div>
     <div class="row">
       <div class="col-md-12">
+        <LogViewer v-if="initialized" />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
         <EnvironmentSettings />
       </div>
     </div>
@@ -22,12 +27,14 @@ import { mapState } from "vuex";
 import EnvironmentSettings from "./Admin/EnvironmentSettings";
 import WebSocketApiTester from "./Admin/WebSocketApiTester";
 import BackupSettings from "./Admin/BackupSettings";
+import LogViewer from "./Admin/LogViewer";
 
 export default {
   components: {
     EnvironmentSettings,
     WebSocketApiTester,
-    BackupSettings
+    BackupSettings,
+    LogViewer
   },
   computed: {
     ...mapState({

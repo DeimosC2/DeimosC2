@@ -17,9 +17,14 @@ export const setPasswordLength = (state, _var) => {
   state.passlength = _var;
 };
 
+export const logs = (state, _var) => {
+  state.logs = _var;
+};
+
 export default {
   setUsers,
   updateBackupSettings,
   setMFA,
-  setPasswordLength
+  setPasswordLength,
+  logs
 };

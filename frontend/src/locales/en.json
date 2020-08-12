@@ -124,7 +124,8 @@
     "make-backup-every": "Make backup every",
     "at": "at",
     "dont-make-backups" : "Don't make backups",
-    "backup-settings": "Backup Settings"
+    "backup-settings": "Backup Settings",
+    "view-log-file": "Log files"
   },
   "users": {
     "users": "Users",
@@ -261,5 +262,12 @@
   "comment": {
     "placeholder": "Write your comment",
     "no-comments": "No comments yet"
+  },
+  "logs": {
+    "error": "Error",
+    "backup": "Backup",
+    "commands": "Commands",
+    "module": "Module",
+    "download": "Download"
   }
 }

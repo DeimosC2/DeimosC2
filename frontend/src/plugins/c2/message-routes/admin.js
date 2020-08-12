@@ -84,6 +84,10 @@ export default class loot {
       this.store.commit("admin/setMFA", Data.MFASetting === "true");
       this.store.commit("admin/setPasswordLength", Data.PassLength[0]);
     }
+
+    else if(functionName === "ViewFile") {
+      this.store.commit("admin/logs", Data.join(" "));
+    }
   }
 
   constructor(store) {

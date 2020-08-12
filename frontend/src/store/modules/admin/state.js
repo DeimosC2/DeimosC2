@@ -7,5 +7,6 @@ export default {
     minutes: 0
   },
   mfa: false,
-  passlength: 16
+  passlength: 16,
+  logs: ""
 };
