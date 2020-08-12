@@ -83,7 +83,7 @@ const C2VuePlugin = {
           else if(Type === "Loot") {
             responseParser = new loot(this.store);
           }
-          else if(Type === "Admin") {
+          else if(Type === "Admin" || Type === "LogViewer") {
             responseParser = new admin(this.store);
           }
           else if(Type === "Archive") {
@@ -274,6 +274,12 @@ const C2VuePlugin = {
       Token: {
         SendToken: (data) => {
           this.sendRequest("Token", "", {Token: data}, this.store);
+        }
+      },
+
+      LogViewer: {
+        fetchLogs: (data) => {
+          this.sendRequest("LogViewer", "ViewFile", {FileType: data}, this.store);
         }
       },
 

@@ -82,6 +82,10 @@ export const endGame = () => {
   Vue.prototype.$c2.Archive.EndGame();
 };
 
+export const getLogs = (context, _var) => {
+  Vue.prototype.$c2.LogViewer.fetchLogs(_var);
+};
+
 export default {
   fetchUserList,
   addUser,
@@ -95,5 +99,6 @@ export default {
   updateAppSettings,
   downloadBackup,
   endGame,
-  createAccount
+  createAccount,
+  getLogs
 };
