@@ -88,12 +88,12 @@
     "AgentOptions": {
       "Delay": {
         "required": true,
-        "type": "string",
+        "type": "float",
         "default": "10.0"
       },
       "Jitter": {
         "required": true,
-        "type": "string",
+        "type": "float",
         "default": "0.1"
       },
       "Eol": {
@@ -201,12 +201,12 @@
     "AgentOptions": {
       "Delay": {
         "required": true,
-        "type": "string",
+        "type": "float",
         "default": "10.0"
       },
       "Jitter": {
         "required": true,
-        "type": "string",
+        "type": "float",
         "default": "0.1"
       },
       "Eol": {
