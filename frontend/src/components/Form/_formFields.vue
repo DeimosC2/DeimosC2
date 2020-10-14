@@ -62,9 +62,7 @@
         </template>
 
         <base-input
-          v-if="
-            ['number', 'string', 'float'].includes(config[key].type) && shouldBeShown(config[key])
-          "
+          v-if="['number', 'float'].includes(config[key].type) && shouldBeShown(config[key])"
           v-model="model[key]"
           :label="$t(`listeners.config.${key}`)"
           :ref="key"
@@ -72,6 +70,25 @@
           @change="validate"
           @keyup.enter.native="validate"
           :type="getType(config[key].type)"
+          :class="{ 'has-danger': hasErrors(key) }"
+          :step="config[key].type === 'float' ? 0.1 : 1"
+          min="0"
+          @blur="model[key] = reformatFloat(model[key], config[key].type)"
+        >
+          <template slot="validationErrors" v-if="hasErrors(key)">
+            {{ getErrors(key) }}
+          </template>
+        </base-input>
+
+        <base-input
+          v-if="config[key].type === 'string' && shouldBeShown(config[key])"
+          v-model="model[key]"
+          :label="$t(`listeners.config.${key}`)"
+          :ref="key"
+          @input="validate"
+          @change="validate"
+          @keyup.enter.native="validate"
+          type="text"
           :class="{ 'has-danger': hasErrors(key) }"
         >
           <template slot="validationErrors" v-if="hasErrors(key)">
@@ -165,8 +182,6 @@ export default {
           return "number";
         case "float":
           return "number";
-        case "string":
-          return "text";
         default:
           return "text";
       }
@@ -192,6 +207,12 @@ export default {
         this.model.Host = agent.LocalIP;
       }
       this.validate();
+    },
+    reformatFloat(value, type) {
+      if (type === "float" && value) {
+        return parseFloat(value).toFixed(1);
+      }
+      return value;
     }
   }
 };

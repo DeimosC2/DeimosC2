@@ -103,6 +103,7 @@ export default {
     },
     onBlur() {
       this.focused = false;
+      this.$emit("blur");
     }
   }
 };
