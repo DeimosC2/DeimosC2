@@ -94,15 +94,15 @@ function init()
 
 function filebrowser($path)
 {
-    if ($_POST['method'] === 'remove')
+    if (isset($_POST['method']) && $_POST['method'] === 'remove')
     {
         fremove($path);
     }
-    elseif ($_POST['method'] === 'download')
+    elseif (isset($_POST['method']) && $_POST['method'] === 'download')
     {
         fdownload($path);
     }
-    elseif ($_POST['method'] === 'mkdir')
+    elseif (isset($_POST['method']) && $_POST['method'] === 'mkdir')
     {
         if (!file_exists($path)) {
             mkdir($path, 0777, true);
@@ -112,22 +112,132 @@ function filebrowser($path)
             echo 0;
         }
     }
-    elseif ($_POST['method'] === 'upload')
+    elseif (isset($_POST['method']) && $_POST['method'] === 'upload')
     {
         fupload($path);
     }
     else
     {
+        $SystemDrives = array();
+        $system_drives_origin = '';
+
         if (php_uname('s') === "Linux")
         {
-            $SystemDrives[] = "";
+            $system_drives_origin = '';
+            $path_directories = array('/bin', '/usr/bin', '/sbin', '/usr/sbin', '/usr/local/bin', '/usr/local/sbin');
+            $disabled_functions = explode(',', ini_get('disable_functions'));
+
+            // Check if can read /proc/self/mounts
+            if (empty($SystemDrives) && is_readable("/proc/self/mounts")) {
+                $mounts_raw = file_get_contents("/proc/self/mounts");
+
+                # Iterate through each line and pull out the relevant parts
+                $mounts = explode("\n", $mounts_raw);
+                foreach ($mounts as $mount) {
+                    $tmp = explode(' ', $mount);
+                    # XXX - Come up with a better way to discern local and network block storage
+                    if (strpos($tmp[0],'/dev/') === 0 && strpos($tmp[0], 'loop') === FALSE && !in_array($tmp[0], $SystemDrives)) {
+                        $SystemDrives[] = $tmp[0];
+                    }
+                }
+                if (!empty($SystemDrives)) {
+                    $system_drives_origin = '/proc/self/mounts';
+                }
+            }
+            if (empty($SystemDrives) && is_readable("/etc/mtab")) {
+                $mounts_raw = file_get_contents("/etc/mtab");
+
+                # Iterate through each line and pull out the relevant parts
+                $mounts = explode("\n", $mounts_raw);
+                foreach ($mounts as $mount) {
+                    $tmp = explode(' ', $mount);
+                    # XXX - Come up with a better way to discern local and network block storage
+                    if (strpos($tmp[0],'/dev/') === 0 && strpos($tmp[0], 'loop') === FALSE && !in_array($tmp[0], $SystemDrives)) {
+                        $SystemDrives[] = $tmp[0];
+                    }
+                }
+                if (!empty($SystemDrives)) {
+                    $system_drives_origin = '/etc/mtab';
+                }
+            }
+            if (empty($SystemDrives) && function_exists('exec') && false === in_array('exec', $disabled_functions)) {
+                $commands = array('df', 'mount', 'fdisk', 'dmesg');
+                foreach ($commands as $command) {
+                    # Try to discern where the command full path is
+                    $command_path = null;
+                    foreach ($path_directories as $path_directory) {
+                        $tmp_command_path = $path_directory . '/' . $command;
+                        if (null === $command_path && is_readable($tmp_command_path) && is_executable($tmp_command_path)) {
+                            $command_path = $tmp_command_path;
+                        }
+                    }
+                    # Can't find the command path or SystemDrives is already populated, try the next command
+                    if (null === $command_path || !empty($SystemDrives)) {
+                        continue;
+                    }
+
+                    switch ($command) {
+                        case 'df': # Fall through, same logic in 'mount' case
+                        case 'mount':
+                            $mounts_raw = null;
+                            $mount_exitcode = null;
+                            $exec_status = exec($command_path, $mounts_raw, $mount_exitcode);
+                            if (null !== $mounts_raw && false !== $exec_status) {
+                                foreach ($mounts_raw as $mount) {
+                                    $tmp = explode(' ', $mount);
+                                    # XXX - Come up with a better way to discern local and network block storage
+                                    if (strpos($tmp[0],'/dev/') === 0 && strpos($tmp[0], 'loop') === FALSE && !in_array($tmp[0], $SystemDrives)) {
+                                        $SystemDrives[] = $tmp[0];
+                                    }
+                                }
+                                if (!empty($SystemDrives)) {
+                                    $system_drives_origin = $command_path;
+                                }
+                            }
+                            break;
+                        case 'fdisk';
+                            $mounts_raw = null;
+                            $mount_exitcode = null;
+                            # A non-root user will get an error about unable to probe devices,
+                            # but the devices will be printed in the error output.
+                            # example -> fdisk: cannot open /dev/loop5: Permission denied
+                            $command = $command_path . ' -l 2>&1';
+                            $exec_status = exec($command, $mounts_raw, $mount_exitcode);
+                            # Note: even if fdisk fails, it still gives a 0 (zero) exit code here!
+                            if (null !== $mounts_raw && false !== $exec_status) {
+                                foreach ($mounts_raw as $mount) {
+                                    $tmp = explode(' ', $mount);
+                                    # XXX - Come up with a better way to discern local and network block storage
+                                    if (strpos($tmp[3], ':') !== false) {
+                                        $tmp[3] = str_replace(':', '', $tmp[3]);
+                                    }
+                                    if (strpos($tmp[3],'/dev/') === 0 && strpos($tmp[3], 'loop') === FALSE && !in_array($tmp[3], $SystemDrives)) {
+                                        $SystemDrives[] = $tmp[3];
+                                    }
+                                }
+                                if (!empty($SystemDrives)) {
+                                    $system_drives_origin = $command_path;
+                                }
+                            }
+                            break;
+                    }
+                }
+            }
+            // Attempt to read /dev/ directory and find applicable devices (unsure if mounted, obviously)
+            if (empty($SystemDrives) && function_exists('glob') && false === in_array('glob', $disabled_functions)) {
+                $glob_pattern = '/dev/{sd,wd,mapper/,xvd,dm-}*';
+                $devices = glob($glob_pattern, GLOB_BRACE);
+                if ($device !== false && !empty($devices)) {
+                    $SystemDrives = $devices;
+                    $system_drives_origin = 'glob ' . $glob_pattern;
+                }
+            }
         }
         elseif (php_uname('s') === "Windows")
         {
             $Drives = get_win_drives();
             if($Drives) {
                 $DriveTypes = array("Unknown","Removable","Fixed","Network","CD-ROM","RAM Disk");
-                $SystemDrives = [];
                 foreach($Drives as $Drive )
                 {
                     if (($Drive->DriveType == $DriveTypes[1])
@@ -137,6 +247,10 @@ function filebrowser($path)
                         $SystemDrives[] = $Drive->Path;
                     }
                 }
+
+                if (!empty($SystemDrives)) {
+                    $system_drives_origin = 'COM Scripting.FileSystemObject';
+                }
             }
         }
 
@@ -145,7 +259,7 @@ function filebrowser($path)
         // CWD == string
         // ParentDir == string
 
-        $main_array = array('Drives' => $SystemDrives, 'CWD' => $cwd, 'ParentDir' => dirname($cwd), 'Directories' => array(), 'Files' => array());
+        $main_array = array('Drives' => $SystemDrives, 'DrivesOrigin' => $system_drives_origin, 'CWD' => $cwd, 'ParentDir' => dirname($cwd), 'Directories' => array(), 'Files' => array());
 
         $dirs = glob($cwd . '/*', GLOB_ONLYDIR);
         foreach ($dirs as $dir)
