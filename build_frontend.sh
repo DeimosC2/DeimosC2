@@ -1,4 +1,5 @@
 cd frontend/
 npm run build
-cp -r dist/ ../resources/frontend/static/
+rm -rf ../resources/frontend/static/*
+cp -r dist/* ../resources/frontend/static/
 cd ..
