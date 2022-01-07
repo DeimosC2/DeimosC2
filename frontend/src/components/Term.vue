@@ -142,7 +142,7 @@ export default {
         zsh: "zsh~ "
       };
       this.prompt = mapping[shell];
-      if (this.jQueryTerm) {
+      if(this.jQueryTerm) {
         this.jQueryTerm.set_prompt(this.prompt);
       }
     },
@@ -203,25 +203,18 @@ export default {
           try {
             const command = commandString.split(" ")[0];
             if (commandList.includes(command)) {
-              const allArgs = [];
-              const rowCommands = commandString.split("|");
-              rowCommands.forEach(singleCommand => {
-                const args = parser(singleCommand, {
-                  configuration: {
-                    "short-option-groups": false
-                  }
-                });
-                Object.keys(args).forEach(item => {
-                  if (item !== "_") {
-                    const param = args[item] !== true ? `-${item} ${args[item]}` : `-${item}`;
-                    args._.push(param);
-                  }
-                });
-                args._.push("|");
-                allArgs.push(args._);
+              const args = parser(commandString, {
+                configuration: {
+                  "short-option-groups": false
+                }
               });
-              allArgs[allArgs.length - 1].pop(); // remove last |
-              result = commands[command]({ _: _.flatten(allArgs) });
+              Object.keys(args).forEach(item => {
+                if (item !== "_") {
+                  const param = args[item] !== true ? `-${item} ${args[item]}` : `-${item}`;
+                  args._.push(param);
+                }
+              });
+              result = commands[command](args);
             }
 
             if (result !== null) {
