@@ -200,20 +200,26 @@ export default {
         if (commandString !== "") {
           const { commands, commandList } = this.settings().extra;
           let result = null;
+          let args = null;
           try {
-            const command = commandString.split(" ")[0];
+            const commandArr = commandString.split(" ");
+            const command = commandArr[0];
             if (commandList.includes(command)) {
-              const args = parser(commandString, {
-                configuration: {
-                  "short-option-groups": false
-                }
-              });
-              Object.keys(args).forEach(item => {
-                if (item !== "_") {
-                  const param = args[item] !== true ? `-${item} ${args[item]}` : `-${item}`;
-                  args._.push(param);
-                }
-              });
+              if (commandString.includes("|")) {
+                args = { _: commandArr };
+              } else {
+                args = parser(commandString, {
+                  configuration: {
+                    "short-option-groups": false
+                  }
+                });
+                Object.keys(args).forEach(item => {
+                  if (item !== "_") {
+                    const param = args[item] !== true ? `-${item} ${args[item]}` : `-${item}`;
+                    args._.push(param);
+                  }
+                });
+              }
               result = commands[command](args);
             }
 

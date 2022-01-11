@@ -182,8 +182,8 @@ export default class commands {
   }
 
   options(args) {
-    this.$logging(["commands::options:args=", args], this.#debug);
-    if (args.help) return this.#usage.options.help;
+    this.$logging(["commands::options:args=", JSON.stringify(args)], this.#debug);
+    if (args.help || args._.length === 1) return this.#usage.options.help;
 
     const optionsKeys = [
       "jitter", // % change of delay
@@ -192,23 +192,26 @@ export default class commands {
       "hours" // live hours like "5:00-19:00"
     ];
 
+    let output = null;
+
     optionsKeys.forEach(key => {
-      let output = null;
-      if (args[key] === undefined) {
-        output = "";
-      } else {
+      if (args[key] !== undefined) {
         try {
           const data = {
             name: this.uuid,
             action: "options",
-            options: [key,args[key].toString()]
+            options: [key, args[key].toString()]
           };
           output = store.dispatch("agents/sendJob", data);
+          this.$logging(["commands::options:data=", data], this.#debug);
+          this.$logging(["commands::options:output=", output], this.#debug);
         } catch (error) {
           output = error;
         }
       }
-      return output;
+    });
+
+    return output;
     });
   }
 
