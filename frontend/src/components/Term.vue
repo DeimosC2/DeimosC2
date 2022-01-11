@@ -142,7 +142,7 @@ export default {
         zsh: "zsh~ "
       };
       this.prompt = mapping[shell];
-      if(this.jQueryTerm) {
+      if (this.jQueryTerm) {
         this.jQueryTerm.set_prompt(this.prompt);
       }
     },

@@ -51,11 +51,11 @@ export default class commands {
   }
 
   $setModulesConfig(config) {
-    let commands = [];
+    const commandsArray = [];
     Object.keys(config).forEach(key => {
-      commands.push(`  ${key} - ${config[key].Info} Example: '${config[key].Example}'`)
+      commandsArray.push(`  ${key} - ${config[key].Info} Example: '${config[key].Example}'`);
     });
-    this.#usage.module.list = commands.join("\n");
+    this.#usage.module.list = commandsArray.join("\n");
     this.#modulesConfig = config;
   }
 
@@ -84,9 +84,12 @@ export default class commands {
   }
 
   help() {
-    const commands = this.$getCommands();
-    return "The list of available commands: \n" + commands.join("\n") +
-      "\n\n Type `<command> --help` to get more info";
+    const commandList = this.$getCommands().join("\n");
+
+    return ```The list of available commands:
+    ${commandList}
+    
+    Type '<command> --help' to get more info```;
   }
 
   "?"() {
@@ -134,26 +137,29 @@ export default class commands {
     if (args.list) return this.#usage.module.list;
 
     _.shift(); // strips the 'module' element from the array
-    try{
+    try {
       const runType = _.shift();
       const moduleName = _.shift();
       const config = this.#modulesConfig[moduleName];
 
-      if(! config) {
-        return `Error: ${moduleName} is not valid. The valid module names are:\n${Object.keys(this.#modulesConfig).join("\n")}`
+      if (!config) {
+        return `Error: ${moduleName} is not valid. The valid module names are:\n${Object.keys(
+          this.#modulesConfig
+        ).join("\n")}`;
       }
 
-      if(! config.RunType.includes(runType)) {
-        return `Error: ${runType} is not valid. The valid run types are:\n${config.RunType.join("\n")}`
+      if (!config.RunType.includes(runType)) {
+        return ```Error: ${runType} is not valid. The valid run types are:
+        ${config.RunType.join("\n")}```;
       }
 
       const data = {
-        "AgentKey": this.uuid,
-        "ModuleName": moduleName,
-        "ModuleType": config.ModuleType,
-        "Server": config.Server,
-        "RunType": runType,
-        "Arguments": _
+        AgentKey: this.uuid,
+        ModuleName: moduleName,
+        ModuleType: config.ModuleType,
+        Server: config.Server,
+        RunType: runType,
+        Arguments: _
       };
 
       return store.dispatch("agents/sendModule", data);
@@ -212,10 +218,9 @@ export default class commands {
     });
 
     return output;
-    });
   }
 
-  kill(args) {
+  kill() {
     let output = null;
     const data = {
       name: this.uuid,
