@@ -16,21 +16,21 @@ import (
 )
 
 type loot struct {
-	CredType string      `json:"Type"`
-	CredData interface{} `json:"Data"`
+	CredType string      `json:"type"`
+	CredData interface{} `json:"data"`
 }
 
 type directory struct {
-	DirectoryName string
-	Perms         string
-	LastAccess    string
+	DirectoryName string `json:"directoryname"`
+	Perms         string `json:"perms"`
+	LastAccess    string `json:"lastaccess"`
 }
 
 type fileData struct {
-	Filename   string
-	Filesize   string
-	FilePerms  string
-	LastAccess string
+	Filename   string `json:"filename"`
+	Filesize   string `json:"filesize"`
+	FilePerms  string `json:"fileperms"`
+	LastAccess string `json:"lastaccess"`
 }
 
 //SaveLoot will save the loot to the struct and DB

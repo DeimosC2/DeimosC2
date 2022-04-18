@@ -43,14 +43,14 @@ type Modules struct {
 
 //Module is a struct for the module to be identified by
 type Module struct {
-	Name string //Holds the name of the module
-	Port int    //Holds the RPC port of the module server
+	Name string `json:"name"` //Holds the name of the module
+	Port int    `json:"port"` //Holds the RPC port of the module server
 }
 
 //AgentPair is used for the queue of agents that need to be paired with the correct module
 type AgentPair struct {
-	AgentKey   string //Name of the agent
-	ModuleName string //Name of the module requested
+	AgentKey   string `json:"agentkey"`   //Name of the agent
+	ModuleName string `json:"modulename"` //Name of the module requested
 }
 
 //StartModuleServer will start up the RPC server required for module communication

@@ -35,7 +35,7 @@ var (
 
 	//Imports required for domain hiding
 	hiddenImports string = `
-	"github.com/SixGenInc/Noctilucent/tls"
+	//"github.com/SixGenInc/Noctilucent/tls" //GONE from GITHUB
 	"github.com/DeimosC2/DeimosC2/agents/resources/domainhiding"
 	`
 

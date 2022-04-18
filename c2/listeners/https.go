@@ -20,18 +20,18 @@ import (
 
 //AdvancedHTTPSOptions holds all the fields needed for the listeners advanced options
 type AdvancedHTTPSOptions struct {
-	ExistingCert bool //Does the user have a cert?
-	CertData     HTTPSListenerCertData
-	RegisterPath string //HTTP path for registering the agent
-	CheckinPath  string //HTTP path for checking in
-	ModulePath   string //HTTP path for module communication
-	PivotPath    string //HTTP path for pivoting
+	ExistingCert bool                  `json:"existingcert"` //Does the user have a cert?
+	CertData     HTTPSListenerCertData `json:"certdata"`
+	RegisterPath string                `json:"registerpath"` //HTTP path for registering the agent
+	CheckinPath  string                `json:"checkinpath"`  //HTTP path for checking in
+	ModulePath   string                `json:"modulepath"`   //HTTP path for module communication
+	PivotPath    string                `json:"pivotpath"`    //HTTP path for pivoting
 }
 
 //HTTPSListenerCertData holds data on imported HTTPS listener structs
 type HTTPSListenerCertData struct {
-	Cert string //Base64 encoded data of the cert
-	Key  string //Base64 encoded data of the key
+	Cert string `json:"cert"` //Base64 encoded data of the cert
+	Key  string `json:"key"`  //Base64 encoded data of the key
 }
 
 //StartHTTPSServer is used to start the https server

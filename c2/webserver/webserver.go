@@ -34,41 +34,41 @@ var serverConfig Config
 
 //Message defines our message object
 type Message struct {
-	Type         string      //Holds the type of message
-	FunctionName string      //Holds the function names
-	Data         interface{} //Holds the rest of the json data to be passed around
+	Type         string      `json:"message"`      //Holds the type of message
+	FunctionName string      `json:"functionname"` //Holds the function names
+	Data         interface{} `json:"data"`         //Holds the rest of the json data to be passed around
 }
 
 //User holds basic data on users for cookies
 type User struct {
-	UserID         string //UUID for the DB
-	Username       string //Username
-	Authenticated  bool   //Authed or not
-	Admin          bool   //If the user is an Admin or not
-	ChangePassword bool   //Does the user need to change their password
-	MFASetup       bool   //Check to see if MFA is set or not for user if it is required
-	MFA            bool   //Check to see if they need to be prompted for MFA
-	MFASuccess     bool   //Did user pass MFA
+	UserID         string `json:"userid"`         //UUID for the DB
+	Username       string `json:"username"`       //Username
+	Authenticated  bool   `json:"authenticated"`  //Authed or not
+	Admin          bool   `json:"admin"`          //If the user is an Admin or not
+	ChangePassword bool   `json:"changepassword"` //Does the user need to change their password
+	MFASetup       bool   `json:"mfasetup"`       //Check to see if MFA is set or not for user if it is required
+	MFA            bool   `json:"mfa"`            //Check to see if they need to be prompted for MFA
+	MFASuccess     bool   `json:"mfasuccess"`     //Did user pass MFA
 }
 
 //loginForm contians the POST data fields required to login
 type loginForm struct {
-	Username string
-	Password string
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 //setupForm is for first time setup of the C2 Server
 type setupForm struct {
-	Username   string
-	Password   string
-	MFA        bool
-	PassLength int
+	Username   string `json:"username"`
+	Password   string `json:"password"`
+	MFA        bool   `json:"mfa"`
+	PassLength int    `json:"passlength"`
 }
 
 //changePassword will contain the POST data fields to facilitate password changes
 type changePassword struct {
-	OldPass string
-	NewPass string
+	OldPass string `json:"oldpass"`
+	NewPass string `json:"newpass"`
 }
 
 //Config holds info on the server configuration
@@ -282,6 +282,17 @@ func RunServer(c Config) {
 	router.HandleFunc("/set.up", firstSetup)
 	router.HandleFunc("/change.pass", changePass)
 	router.HandleFunc("/token", mfaSubmit)
+
+	/*
+		Listener REST API routes
+	*/
+	router.HandleFunc("/listener/list", listenerList)
+	router.HandleFunc("/listener/kill", listenerKill)
+	router.HandleFunc("/listener/createagent", listenerCreateAgent)
+	router.HandleFunc("/listener/privatekey", listenerGetListenerPrivateKey)
+	router.HandleFunc("/listener/compiled", listenerGetCompiled)
+	router.HandleFunc("/listener/add", listenerAdd)
+	router.HandleFunc("/listener/edit", listenerEdit)
 
 	//Serve the main application
 	router.PathPrefix("/").HandlerFunc(http.HandlerFunc(index(cwd)))

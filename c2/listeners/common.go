@@ -21,21 +21,21 @@ import (
 
 //ListOptions holds all possible options required for listeners
 type ListOptions struct {
-	LType        string      //Type of listener
-	Name         string      //Listener name
-	Host         string      //IP or DQDN listener will bind too
-	Port         string      //Port to listen on
-	Key          string      //Listener UUID4 name
-	Advanced     interface{} //Advanced listener options held as JSON here
-	AgentOptions AgentOptions
+	LType        string       `json:"ltype"`    //Type of listener
+	Name         string       `json:"name"`     //Listener name
+	Host         string       `json:"host"`     //IP or DQDN listener will bind too
+	Port         string       `json:"port"`     //Port to listen on
+	Key          string       `json:"key"`      //Listener UUID4 name
+	Advanced     interface{}  `json:"advanced"` //Advanced listener options held as JSON here
+	AgentOptions AgentOptions `json:"agentoptions"`
 }
 
 //AgentOptions holds all of the options for agents
 type AgentOptions struct {
-	Delay     string //Agent Delay
-	Jitter    string //Agent Jitter value
-	Eol       string //When the Agent should die
-	LiveHours string //When the agent can operate
+	Delay     string `json:"delay"`     //Agent Delay
+	Jitter    string `json:"jitter"`    //Agent Jitter value
+	Eol       string `json:"eol"`       //When the Agent should die
+	LiveHours string `json:"livehours"` //When the agent can operate
 }
 
 //Dropper returns the binary asked for by the dropper

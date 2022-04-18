@@ -8,10 +8,10 @@ import (
 
 //SendMessage defines the structure of the message to the frontend
 type SendMessage struct {
-	Type         string //Type of message to send to the front end
-	FunctionName string //Holds the function names
-	Data         string //data to be sent
-	Success      bool   //If it succeed or not
+	Type         string `json:"type"`         //Type of message to send to the front end
+	FunctionName string `json:"functionname"` //Holds the function names
+	Data         string `json:"data"`         //data to be sent
+	Success      bool   `json:"success"`      //If it succeed or not
 }
 
 //AllClients that are currently connected
@@ -45,7 +45,7 @@ func AlertUsers(m SendMessage) {
 	AllClients.Mutex.Lock()
 	defer AllClients.Mutex.Unlock()
 	for k, v := range AllClients.List {
-		if v.Alive == true {
+		if v.Alive {
 			k.WriteJSON(m)
 		}
 
@@ -64,7 +64,7 @@ func AlertRegisteredUsers(m SendMessage, name string) {
 	AllClients.Mutex.Lock()
 	defer AllClients.Mutex.Unlock()
 	for k, v := range AllClients.List {
-		if v.Alive == true {
+		if v.Alive {
 			for _, n := range v.Agents {
 				if n == name {
 					k.WriteJSON(m)

@@ -13,24 +13,24 @@ import (
 
 //PivotGraph struct holds data for the API call
 type PivotGraph struct {
-	Listenerkey string
-	Name        string
-	Top         bool
-	Agents      []basicAgent
-	LType       string
-	Port        string
+	Listenerkey string       `json:"listenerkey"`
+	Name        string       `json:"name"`
+	Top         bool         `json:"top"`
+	Agents      []basicAgent `json:"agents"`
+	LType       string       `json:"ltype"`
+	Port        string       `json:"port"`
 }
 
 type basicAgent struct {
-	AgentKey   string
-	AgentName  string
-	OS         string
-	OSType     string
-	IsElevated bool
-	Hostname   string
-	Username   string
-	LocalIP    string
-	Linked     *PivotGraph //if nested we would add it in here
+	AgentKey   string      `json:"agentkey"`
+	AgentName  string      `json:"agentname"`
+	OS         string      `json:"os"`
+	OSType     string      `json:"ostype"`
+	IsElevated bool        `json:"iselevated"`
+	Hostname   string      `json:"hostname"`
+	Username   string      `json:"username"`
+	LocalIP    string      `json:"localip"`
+	Linked     *PivotGraph `json:"linked"` //if nested we would add it in here
 }
 
 //Takes in the dashboard data and parses it
