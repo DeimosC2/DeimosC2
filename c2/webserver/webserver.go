@@ -100,7 +100,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 		logging.Logger.Println("Client connected: \n", ws.RemoteAddr())
 	}
 
-	session, err := store.Get(r, "Operator")
+	session, _ := store.Get(r, "Operator")
 	val := session.Values["User"]
 	logging.Logger.Println(val)
 	uID := User{}
@@ -287,12 +287,12 @@ func RunServer(c Config) {
 		Listener REST API routes
 	*/
 	router.HandleFunc("/listener/list", listenerList)
-	router.HandleFunc("/listener/kill", listenerKill)
-	router.HandleFunc("/listener/createagent", listenerCreateAgent)
-	router.HandleFunc("/listener/privatekey", listenerGetListenerPrivateKey)
-	router.HandleFunc("/listener/compiled", listenerGetCompiled)
 	router.HandleFunc("/listener/add", listenerAdd)
-	router.HandleFunc("/listener/edit", listenerEdit)
+	router.HandleFunc("/listener/{key}/kill", listenerKill)
+	router.HandleFunc("/listener/{key}/createagent", listenerCreateAgent)
+	router.HandleFunc("/listener/{key}/privatekey", listenerGetListenerPrivateKey)
+	router.HandleFunc("/listener/{key}/compiled", listenerGetCompiled)
+	router.HandleFunc("/listener/{key}/edit", listenerEdit)
 
 	//Serve the main application
 	router.PathPrefix("/").HandlerFunc(http.HandlerFunc(index(cwd)))

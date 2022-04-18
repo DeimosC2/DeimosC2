@@ -40,16 +40,16 @@ type MListeners struct {
 
 //Listener struct holds data on all listeners
 type Listener struct {
-	LType        string      //Type of listener
-	Name         string      //Listener name
-	Host         string      //IP or FQDN of the server
-	Port         string      //Port to listen on
-	ListChan     chan bool   //Channel used to kill off the listeners
-	Key          string      //Listener UUID4 name
-	PrivKey      []byte      //RSA private key
-	PubKey       []byte      //RSA public key
-	Advanced     interface{} //Advanced listener options held as JSON here
-	AgentOptions listeners.AgentOptions
+	LType        string                 `json:"ltype"`    //Type of listener
+	Name         string                 `json:"name"`     //Listener name
+	Host         string                 `json:"host"`     //IP or FQDN of the server
+	Port         string                 `json:"port"`     //Port to listen on
+	ListChan     chan bool              `json:"listchan"` //Channel used to kill off the listeners
+	Key          string                 `json:"key"`      //Listener UUID4 name
+	PrivKey      []byte                 `json:"privkey"`  //RSA private key
+	PubKey       []byte                 `json:"pubkey"`   //RSA public key
+	Advanced     interface{}            `json:"advanced"` //Advanced listener options held as JSON here
+	AgentOptions listeners.AgentOptions `json:"agentoptions"`
 }
 
 //StartNewListener will start up a new listener of the type and options that are expected
@@ -165,7 +165,7 @@ func ReInitListener(l Listener) {
 }
 
 //stopListener will stop the listener that is passed to it
-func stopListener(key string) {
+func StopListener(key string) bool {
 
 	AllListeners.mutex.Lock()
 	defer AllListeners.mutex.Unlock()
@@ -175,6 +175,7 @@ func stopListener(key string) {
 	}
 
 	sqldb.RemoveListener(key)
+	return true
 }
 
 func killNetList(l net.Listener, c *Listener) {
@@ -212,8 +213,8 @@ func killPivotTCPList(c *Listener, userID string, username string) {
 	agents.SetJob(listenerKillJob, userID, username)
 }
 
-//getCompiled returns a list of compiled binaries
-func getCompiled(key string) (bool, []string) {
+//GetCompiled returns a list of compiled binaries
+func GetCompiled(key string) (bool, []string) {
 	//Arrays to store the file and directory info
 	var binFiles []string
 
@@ -227,7 +228,7 @@ func getCompiled(key string) (bool, []string) {
 
 	//Check to ensure path meets valid characters
 	var validName = regexp.MustCompile(`[^a-zA-Z0-9-\/]+`)
-	if validName.MatchString(key) == false {
+	if !validName.MatchString(key) {
 		files, _ := ioutil.ReadDir(listenerPath)
 
 		for _, file := range files {
@@ -241,7 +242,7 @@ func getCompiled(key string) (bool, []string) {
 func ListListeners() (list []listeners.ListOptions) {
 	AllListeners.mutex.Lock()
 	defer AllListeners.mutex.Unlock()
-	for _, v := range lib.AllListeners.list {
+	for _, v := range AllListeners.list {
 		l := listeners.ListOptions{
 			LType:        v.LType,
 			Name:         v.Name,
@@ -293,7 +294,7 @@ func ParseSocket(fname string, data interface{}, ws *websocket.Conn, userID stri
 			return
 		}
 
-		stopListener(m["Key"].(string))
+		StopListener(m["Key"].(string))
 		name := "{\"Name\": \"" + m["Key"].(string) + "\"}"
 		outMsg := websockets.SendMessage{
 			Type:         "Listener",
@@ -353,7 +354,7 @@ func ParseSocket(fname string, data interface{}, ws *websocket.Conn, userID stri
 			return
 		}
 
-		success, files := getCompiled(m["Key"].(string))
+		success, files := GetCompiled(m["Key"].(string))
 
 		msg, _ := json.Marshal(files)
 
@@ -432,7 +433,7 @@ func ParseSocket(fname string, data interface{}, ws *websocket.Conn, userID stri
 		websockets.AlertUsers(outMsg)
 
 	} else if fname == "Edit" {
-		stopListener(listener.Key)
+		StopListener(listener.Key)
 		success, newL := StartNewListener(listener, userID, true, gooses, obfuscation, username)
 
 		l := listeners.ListOptions{

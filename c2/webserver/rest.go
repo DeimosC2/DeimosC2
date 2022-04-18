@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"github.com/DeimosC2/DeimosC2/c2/lib"
+	"github.com/DeimosC2/DeimosC2/c2/lib/sqldb"
+	"github.com/gorilla/mux"
 )
 
 /*
@@ -39,13 +41,26 @@ func listenerList(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(lib.ListListeners())
-	return
+
 }
 
 func listenerKill(w http.ResponseWriter, r *http.Request) {
 	if !isAuthed(r) {
 		http.Redirect(w, r, "/login", http.StatusFound)
 	}
+
+	vars := mux.Vars(r)
+	key := vars["key"]
+
+	lib.StopListener(key)
+
+	resp := struct {
+		Name string `json:"name"`
+	}{
+		Name: key,
+	}
+	json.NewEncoder(w).Encode(resp)
+
 }
 
 func listenerCreateAgent(w http.ResponseWriter, r *http.Request) {
@@ -58,12 +73,31 @@ func listenerGetListenerPrivateKey(w http.ResponseWriter, r *http.Request) {
 	if !isAuthed(r) {
 		http.Redirect(w, r, "/login", http.StatusFound)
 	}
+	vars := mux.Vars(r)
+	key := vars["key"]
+
+	privKey := sqldb.GetListenerPrivateKey(key)
+
+	resp := struct {
+		PrivateKey string `json:"privatekey"`
+	}{
+		PrivateKey: privKey,
+	}
+	json.NewEncoder(w).Encode(resp)
 }
 
+//listenerGetCompiled returns the compiled binaries for the listener requested
 func listenerGetCompiled(w http.ResponseWriter, r *http.Request) {
 	if !isAuthed(r) {
 		http.Redirect(w, r, "/login", http.StatusFound)
 	}
+	vars := mux.Vars(r)
+	key := vars["key"]
+
+	_, files := lib.GetCompiled(key)
+
+	json.NewEncoder(w).Encode(files)
+
 }
 
 func listenerAdd(w http.ResponseWriter, r *http.Request) {
