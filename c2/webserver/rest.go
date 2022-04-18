@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/DeimosC2/DeimosC2/c2/lib"
-	"github.com/DeimosC2/DeimosC2/c2/listeners"
 )
 
 /*
@@ -15,6 +14,19 @@ import (
 
 */
 
+//isAuthed returns if the user is authentiated or not
+func isAuthed(r *http.Request) bool {
+	session, _ := store.Get(r, "Operator")
+	val := session.Values["User"]
+	uID := User{}
+	uID, ok := val.(User)
+	if !ok || !uID.Authenticated {
+		return false
+	} else {
+		return true
+	}
+}
+
 /*
 
 	Below is the list of Listener Functions that are exposed to the REST API
@@ -22,48 +34,48 @@ import (
 */
 
 func listenerList(w http.ResponseWriter, r *http.Request) {
-
-	lib.AllListeners.mutex.Lock()
-	defer lib.AllListeners.mutex.Unlock()
-	list := []listeners.ListOptions{}
-	for _, v := range lib.AllListeners.list {
-		l := listeners.ListOptions{
-			LType:        v.LType,
-			Name:         v.Name,
-			Host:         v.Host,
-			Port:         v.Port,
-			Key:          v.Key,
-			Advanced:     v.Advanced,
-			AgentOptions: v.AgentOptions,
-		}
-		list = append(list, l)
+	if !isAuthed(r) {
+		http.Redirect(w, r, "/login", http.StatusFound)
 	}
-	json.NewEncoder(w).Encode(list)
+
+	json.NewEncoder(w).Encode(lib.ListListeners())
 	return
 }
 
 func listenerKill(w http.ResponseWriter, r *http.Request) {
-
+	if !isAuthed(r) {
+		http.Redirect(w, r, "/login", http.StatusFound)
+	}
 }
 
 func listenerCreateAgent(w http.ResponseWriter, r *http.Request) {
-
+	if !isAuthed(r) {
+		http.Redirect(w, r, "/login", http.StatusFound)
+	}
 }
 
 func listenerGetListenerPrivateKey(w http.ResponseWriter, r *http.Request) {
-
+	if !isAuthed(r) {
+		http.Redirect(w, r, "/login", http.StatusFound)
+	}
 }
 
 func listenerGetCompiled(w http.ResponseWriter, r *http.Request) {
-
+	if !isAuthed(r) {
+		http.Redirect(w, r, "/login", http.StatusFound)
+	}
 }
 
 func listenerAdd(w http.ResponseWriter, r *http.Request) {
-
+	if !isAuthed(r) {
+		http.Redirect(w, r, "/login", http.StatusFound)
+	}
 }
 
 func listenerEdit(w http.ResponseWriter, r *http.Request) {
-
+	if !isAuthed(r) {
+		http.Redirect(w, r, "/login", http.StatusFound)
+	}
 }
 
 /*

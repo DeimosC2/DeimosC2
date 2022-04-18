@@ -237,6 +237,25 @@ func getCompiled(key string) (bool, []string) {
 	return true, binFiles
 }
 
+//ListListeners returns a slice of all the current listeners and their options
+func ListListeners() (list []listeners.ListOptions) {
+	AllListeners.mutex.Lock()
+	defer AllListeners.mutex.Unlock()
+	for _, v := range lib.AllListeners.list {
+		l := listeners.ListOptions{
+			LType:        v.LType,
+			Name:         v.Name,
+			Host:         v.Host,
+			Port:         v.Port,
+			Key:          v.Key,
+			Advanced:     v.Advanced,
+			AgentOptions: v.AgentOptions,
+		}
+		list = append(list, l)
+	}
+	return
+}
+
 //ParseSocket takes in data from the websocket and does what it needs to with it
 func ParseSocket(fname string, data interface{}, ws *websocket.Conn, userID string, username string) {
 	m := data.(map[string]interface{})
