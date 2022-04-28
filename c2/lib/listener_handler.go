@@ -359,8 +359,8 @@ func ParseSocket(fname string, data interface{}, ws *websocket.Conn, userID stri
 		msg, _ := json.Marshal(files)
 
 		outMsg := websockets.SendMessage{
-			Type:         "Listener",
-			FunctionName: "GetCompiled",
+			Type:         "listener",
+			FunctionName: "getcompiled",
 			Data:         string(msg),
 			Success:      success,
 		}

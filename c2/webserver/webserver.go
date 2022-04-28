@@ -170,10 +170,10 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			websockets.AlertSingleUser(msg, ws)
 		} else if !uID.MFASetup || uID.MFASuccess { //If no MFA is required or MFA was successful
 			//Send user info to FE
-			data := "{\"UserID\":\"" + uID.UserID + "\", \"UserName\": \"" + uID.Username + "\", \"Admin\": \"" + strconv.FormatBool(uID.Admin) + "\"}"
+			data := "{\"userid\":\"" + uID.UserID + "\", \"username\": \"" + uID.Username + "\", \"admin\": \"" + strconv.FormatBool(uID.Admin) + "\"}"
 			output := websockets.SendMessage{
-				Type:         "User",
-				FunctionName: "Info",
+				Type:         "user",
+				FunctionName: "info",
 				Data:         data,
 				Success:      true,
 			}

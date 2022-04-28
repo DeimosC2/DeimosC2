@@ -28,6 +28,8 @@ type ListOptions struct {
 	Key          string       `json:"key"`      //Listener UUID4 name
 	Advanced     interface{}  `json:"advanced"` //Advanced listener options held as JSON here
 	AgentOptions AgentOptions `json:"agentoptions"`
+	Obfuscation  bool         `json:"obfuscations,omitempty"`
+	Gooses       []string     `json:"gooses,omitempty"`
 }
 
 //AgentOptions holds all of the options for agents

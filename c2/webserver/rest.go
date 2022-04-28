@@ -6,6 +6,8 @@ import (
 
 	"github.com/DeimosC2/DeimosC2/c2/lib"
 	"github.com/DeimosC2/DeimosC2/c2/lib/sqldb"
+	"github.com/DeimosC2/DeimosC2/c2/listeners"
+	"github.com/DeimosC2/DeimosC2/lib/logging"
 	"github.com/gorilla/mux"
 )
 
@@ -35,6 +37,7 @@ func isAuthed(r *http.Request) bool {
 
 */
 
+//Lists all the active listeners
 func listenerList(w http.ResponseWriter, r *http.Request) {
 	if !isAuthed(r) {
 		http.Redirect(w, r, "/login", http.StatusFound)
@@ -44,6 +47,7 @@ func listenerList(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//Kills the given listener
 func listenerKill(w http.ResponseWriter, r *http.Request) {
 	if !isAuthed(r) {
 		http.Redirect(w, r, "/login", http.StatusFound)
@@ -69,6 +73,7 @@ func listenerCreateAgent(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//returns the private key f
 func listenerGetListenerPrivateKey(w http.ResponseWriter, r *http.Request) {
 	if !isAuthed(r) {
 		http.Redirect(w, r, "/login", http.StatusFound)
@@ -104,12 +109,89 @@ func listenerAdd(w http.ResponseWriter, r *http.Request) {
 	if !isAuthed(r) {
 		http.Redirect(w, r, "/login", http.StatusFound)
 	}
+	session, _ := store.Get(r, "Operator")
+	val := session.Values["User"]
+	uID := User{}
+	uID, ok := val.(User)
+	if !ok {
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	listener := listeners.ListOptions{}
+	err := decoder.Decode(&listener)
+	if err != nil {
+		logging.Logger.Println(err)
+		return
+	}
+
+	success, newL := lib.StartNewListener(listener, uID.UserID, true, listener.Gooses, listener.Obfuscation, uID.Username)
+
+	if !success {
+		//we need to handle these
+		logging.Logger.Println("failure to start listener")
+	}
+
+	//TODO: this makes no fucking sense, why isnt the above call a method?
+	l := listeners.ListOptions{
+		LType:        newL.LType,
+		Name:         newL.Name,
+		Host:         newL.Host,
+		Port:         newL.Port,
+		Key:          newL.Key,
+		Advanced:     newL.Advanced,
+		AgentOptions: newL.AgentOptions,
+	}
+	newMsg, _ := json.Marshal(l)
+
+	json.NewEncoder(w).Encode(newMsg)
+
 }
 
 func listenerEdit(w http.ResponseWriter, r *http.Request) {
 	if !isAuthed(r) {
 		http.Redirect(w, r, "/login", http.StatusFound)
 	}
+
+	session, _ := store.Get(r, "Operator")
+	val := session.Values["User"]
+	uID := User{}
+	uID, ok := val.(User)
+	if !ok {
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	listener := listeners.ListOptions{}
+	err := decoder.Decode(&listener)
+	if err != nil {
+		logging.Logger.Println(err)
+		return
+	}
+
+	lib.StopListener(listener.Key)
+
+	success, newL := lib.StartNewListener(listener, uID.UserID, true, listener.Gooses, listener.Obfuscation, uID.Username)
+
+	if !success {
+		//we need to handle these
+		logging.Logger.Println("failure to start listener")
+	}
+
+	//TODO: this makes no fucking sense, why isnt the above call a method?
+	l := listeners.ListOptions{
+		LType:        newL.LType,
+		Name:         newL.Name,
+		Host:         newL.Host,
+		Port:         newL.Port,
+		Key:          newL.Key,
+		Advanced:     newL.Advanced,
+		AgentOptions: newL.AgentOptions,
+	}
+	newMsg, _ := json.Marshal(l)
+
+	json.NewEncoder(w).Encode(newMsg)
+
 }
 
 /*
