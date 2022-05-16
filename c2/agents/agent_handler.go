@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"os"
 	"path"
-	"strings"
 	"sync"
 	"time"
 
@@ -297,73 +296,80 @@ func ParseSocket(fname string, data interface{}, ws *websocket.Conn, userID stri
 	m := data.(map[string]interface{})
 
 	switch fname {
-	case "List":
+	case "list":
 		AllAgents.Mutex.Lock()
 		defer AllAgents.Mutex.Unlock()
-		msg := "["
+		var aList []string
 		for _, v := range AllAgents.List {
 			newMsg, _ := json.Marshal(v)
-			msg += string(newMsg) + ","
+			aList = append(aList, string(newMsg))
 		}
-		msg = strings.TrimSuffix(msg, ",")
-		msg += "]"
+		msg, _ := json.Marshal(aList)
+
 		outMsg := websockets.SendMessage{
-			Type:         "Agent",
-			FunctionName: "List",
-			Data:         msg,
+			Type:         "agent",
+			FunctionName: "list",
+			Data:         string(msg),
 			Success:      true,
 		}
 		websockets.AlertSingleUser(outMsg, ws)
 		return
-	case "AddComment":
-		if !validation.ValidateMapAlert(m, []string{"AgentKey", "Comment"}, ws) {
+	case "addcomment":
+		if !validation.ValidateMapAlert(m, []string{"agentkey", "comment"}, ws) {
 			return
 		}
-		success, rData, agentKey := sqldb.AddComment(m["AgentKey"].(string), m["Comment"].(string), username)
-		output := "{\"AgentKey\":\"" + agentKey + "\", \"Data\": \"" + rData + "\"}"
-		outMsg := websockets.SendMessage{
-			Type:         "Agent",
-			FunctionName: "AddComment",
-			Data:         output,
-			Success:      success,
+		success, rData, agentKey := sqldb.AddComment(m["agentkey"].(string), m["comment"].(string), username)
+		ac := AgentComments{
+			AgentKey: agentKey,
+			Data:     rData,
 		}
-		websockets.AlertSingleUser(outMsg, ws)
+
+		ac.SendToFE("addcomment", success, ws)
 		return
-	case "ListComments":
-		if !validation.ValidateMapAlert(m, []string{"AgentKey"}, ws) {
+	case "listcomments":
+		if !validation.ValidateMapAlert(m, []string{"agentkey"}, ws) {
 			return
 		}
-		rData, agentKey := sqldb.ListComments(m["AgentKey"].(string))
-		output := "{\"AgentKey\":\"" + agentKey + "\", \"Data\": " + rData + "}"
-		outMsg := websockets.SendMessage{
-			Type:         "Agent",
-			FunctionName: "ListComments",
-			Data:         output,
-			Success:      true,
+		rData, agentKey := sqldb.ListComments(m["agentkey"].(string))
+
+		ac := AgentComments{
+			AgentKey: agentKey,
+			Data:     rData,
 		}
-		websockets.AlertSingleUser(outMsg, ws)
+
+		ac.SendToFE("listcomments", true, ws)
+
 		return
-	case "SetName":
-		if !validation.ValidateMapAlert(m, []string{"AgentKey", "AgentName"}, ws) {
+	case "setname":
+		if !validation.ValidateMapAlert(m, []string{"agentkey", "agentname"}, ws) {
 			return
 		}
-		agentKey, rData := sqldb.SetAgentName(m["AgentKey"].(string), m["AgentName"].(string))
+		agentKey, rData := sqldb.SetAgentName(m["agentkey"].(string), m["agentname"].(string))
 		updateAgent(agentKey, rData)
-		output := "{\"AgentKey\":\"" + agentKey + "\", \"AgentName\": \"" + rData + "\"}"
+
+		an := struct {
+			AgentKey  string `json:"agentkey"`
+			AgentName string `json:"agentname"`
+		}{
+			AgentKey:  agentKey,
+			AgentName: rData,
+		}
+		output, _ := json.Marshal(an)
+
 		outMsg := websockets.SendMessage{
-			Type:         "Admin",
-			FunctionName: "SetName",
-			Data:         output,
+			Type:         "admin",
+			FunctionName: "setname",
+			Data:         string(output),
 			Success:      true,
 		}
 		websockets.AlertSingleUser(outMsg, ws)
 		return
-	case "Module":
-		if !validation.ValidateMapAlert(m, []string{"AgentKey", "ModuleName", "ModuleType", "RunType", "Arguments", "Server", "Arguments"}, ws) {
+	case "module":
+		if !validation.ValidateMapAlert(m, []string{"agentkey", "modulename", "moduletype", "runtype", "arguments", "server", "arguments"}, ws) {
 			return
 		}
 		var args []string
-		switch val := m["Arguments"].(type) {
+		switch val := m["arguments"].(type) {
 		case []interface{}:
 			for _, x := range val {
 				logging.Logger.Println(x)
@@ -371,7 +377,7 @@ func ParseSocket(fname string, data interface{}, ws *websocket.Conn, userID stri
 			}
 			AllAgents.Mutex.Lock()
 			var os string
-			if val, ok := AllAgents.List[m["AgentKey"].(string)]; ok {
+			if val, ok := AllAgents.List[m["agentkey"].(string)]; ok {
 				os = val.OS
 			} else {
 				return
@@ -393,28 +399,28 @@ func ParseSocket(fname string, data interface{}, ws *websocket.Conn, userID stri
 				ft = ".elf"
 			}
 			nMod := modulescommon.ModuleCom{
-				AgentKey:   m["AgentKey"].(string),
-				Server:     m["Server"].(bool),
+				AgentKey:   m["agentkey"].(string),
+				Server:     m["server"].(bool),
 				Download:   true,
 				Kill:       false,
-				ModuleName: m["ModuleName"].(string),
-				ModuleType: m["ModuleType"].(string),
+				ModuleName: m["modulename"].(string),
+				ModuleType: m["moduletype"].(string),
 				FileType:   ft,
 				Data:       nil,
 			}
 			binary := modules.SendModule(nMod)
 
 			job := AgentJob{
-				AgentKey:  m["AgentKey"].(string),
+				AgentKey:  m["agentkey"].(string),
 				JobType:   "module",
-				Arguments: []string{m["ModuleName"].(string), m["RunType"].(string), binary},
+				Arguments: []string{m["modulename"].(string), m["runtype"].(string), binary},
 			}
 
 			success := SetJob(job, userID, username)
 
 			outMsg := websockets.SendMessage{
-				Type:         "Agent",
-				FunctionName: "Module",
+				Type:         "agent",
+				FunctionName: "module",
 				Data:         "",
 				Success:      success,
 			}
@@ -422,27 +428,27 @@ func ParseSocket(fname string, data interface{}, ws *websocket.Conn, userID stri
 			return
 		}
 		return
-	case "RemoveAgent":
-		if !validation.ValidateMapAlert(m, []string{"AgentKey"}, ws) {
+	case "removeagent":
+		if !validation.ValidateMapAlert(m, []string{"agentkey"}, ws) {
 			return
 		}
-		agentKey := m["AgentKey"].(string)
+		agentKey := m["agentkey"].(string)
 		RemoveAgent(agentKey)
 		logging.Logger.Println("Removing agent: ", agentKey)
 		outMsg := websockets.SendMessage{
-			Type:         "Agent",
-			FunctionName: "RemoveAgent",
+			Type:         "agent",
+			FunctionName: "removeAgent",
 			Data:         "",
 			Success:      true,
 		}
 		websockets.AlertUsers(outMsg)
 		return
 	default:
-		if !validation.ValidateMapAlert(m, []string{"AgentKey", "JobType", "Arguments"}, ws) {
+		if !validation.ValidateMapAlert(m, []string{"agentkey", "jobtype", "arguments"}, ws) {
 			return
 		}
 		var args []string
-		switch val := m["Arguments"].(type) {
+		switch val := m["arguments"].(type) {
 		case []interface{}:
 			for _, x := range val {
 				logging.Logger.Println(x)
@@ -450,16 +456,16 @@ func ParseSocket(fname string, data interface{}, ws *websocket.Conn, userID stri
 			}
 		}
 
-		if fname == "Job" {
+		if fname == "job" {
 			job := AgentJob{
-				AgentKey:  m["AgentKey"].(string),
-				JobType:   m["JobType"].(string),
+				AgentKey:  m["agentkey"].(string),
+				JobType:   m["jobtype"].(string),
 				Arguments: args,
 			}
 			success := SetJob(job, userID, username)
 			outMsg := websockets.SendMessage{
-				Type:         "Agent",
-				FunctionName: "Job",
+				Type:         "agent",
+				FunctionName: "job",
 				Data:         "",
 				Success:      success,
 			}
@@ -468,5 +474,4 @@ func ParseSocket(fname string, data interface{}, ws *websocket.Conn, userID stri
 			logging.Logger.Println("No valid fname passed to parse agent")
 		}
 	}
-	return
 }
