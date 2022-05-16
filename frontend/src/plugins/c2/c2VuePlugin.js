@@ -29,72 +29,72 @@ const C2VuePlugin = {
     // eslint-disable-next-line no-param-reassign
     Vue.prototype.$c2 = {
       MessageRouter: msg => {
-        const {Type, FunctionName} = msg;
-        let {Data, Success} = msg;
+        const {type, functionname} = msg;
+        let {data, success} = msg;
         this.logging(msg, "warn");
         this.logging(`c2VuePlugin::$c2:MessageRouter:msg.stringify=${JSON.stringify(msg)}`);
-        this.logging(`c2VuePlugin::$c2:MessageRouter:Type=${Type}`);
-        this.logging(`c2VuePlugin::$c2:MessageRouter:FunctionName=${FunctionName}`);
+        this.logging(`c2VuePlugin::$c2:MessageRouter:Type=${type}`);
+        this.logging(`c2VuePlugin::$c2:MessageRouter:FunctionName=${functionname}`);
 
         try {
-          Data = JSON.parse(Data);
+          data = JSON.parse(data);
         } catch (error) {
           this.logging(`Error Caught: ${error}`, "warn");
-          Data = Data.split(" ");
+          data = data.split(" ");
         }
 
-        Success = Boolean(Success);
+        success = Boolean(success);
 
-        if(Type === "MFA Setup Required") {
+        if(type === "MFA Setup Required") {
           this.store.dispatch("setMFARequired");
         }
-        else if(Type === "MFA Required") {
+        else if(type === "MFA Required") {
           this.store.dispatch("setMFARequired");
         }
-        else if(Type === "QRCode") {
-          this.store.commit("setQRCode", Data);
+        else if(type === "QRCode") {
+          this.store.commit("setQRCode", data);
         }
-        else if(Type === "ChangePassword") {
+        else if(type === "ChangePassword") {
           this.store.commit("forceToChangePassword", true);
         }
-        else if(Type === "User") {
-          this.store.commit("setUser", Data);
+        else if(type === "User") {
+          this.store.commit("setUser", data);
         }
-        else if(Type === "Cookie") {
-          if (!Success) {
+        else if(type === "Cookie") {
+          if (!success) {
             this.logging("login failed, redirect to login page", "warn");
             window.location.href = "/";
           }
         } else {
 
           let responseParser = null;
-          if(Type === "Listener") {
+          if(type === "listener") {
             responseParser = new listener(this.store);
           }
-          else if(Type === "Agent") {
+          else if(type === "Agent") {
             responseParser = new agent(this.store);
           }
-          else if(Type === "Metrics") {
+          else if(type === "Metrics") {
             responseParser = new metrics(this.store);
           }
-          else if(Type === "WebShell") {
+          else if(type === "WebShell") {
             responseParser = new webshell(this.store);
           }
-          else if(Type === "Loot") {
+          else if(type === "Loot") {
             responseParser = new loot(this.store);
           }
-          else if(Type === "Admin") {
+          else if(type === "Admin") {
             responseParser = new admin(this.store);
           }
-          else if(Type === "Archive") {
+          else if(type === "Archive") {
             responseParser = new archive(this.store);
           }
           else {
-            this.logging(`c2VuePlugin::$c2:MessageRouter: Unknown Type=${Type}`, "warn");
+            this.logging(`c2VuePlugin::$c2:MessageRouter: Unknown Type=${type}`, "warn");
           }
 
           if(responseParser) {
-            responseParser.processResponse(FunctionName, Data, Success);
+            responseParser.processResponse(functionname, data, success);
           }
         }
       },

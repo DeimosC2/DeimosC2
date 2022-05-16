@@ -120,10 +120,10 @@ func register(data string, lName string, DNS bool, agentKey string, externalIP s
 //Takes in the agents job output and then sends it any new jobs that may exist
 func checkIn(data string, agentKey string, externalIP string) {
 	//Update Heartbeat
-	hB := "[{\"AgentKey\": \"" + agentKey + "\", \"Time\": \"" + time.Now().String() + "\"}]"
+	hB := "[{\"agentkey\": \"" + agentKey + "\", \"time\": \"" + time.Now().String() + "\"}]"
 	outMsg := websockets.SendMessage{
-		Type:         "Agent",
-		FunctionName: "HeartBeat",
+		Type:         "agent",
+		FunctionName: "heartbeat",
 		Data:         hB,
 		Success:      true,
 	}

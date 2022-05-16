@@ -31,7 +31,8 @@ module.exports = {
 
         // proxy calls for downloading files
         "/generated": { target: apiServer },
-        "/looted": { target: apiServer }
+        "/looted": { target: apiServer },
+        "/config": { target: apiServer }
       }
     },
     plugins: [
