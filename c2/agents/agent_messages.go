@@ -17,7 +17,7 @@ type (
 func (ac *AgentComments) SendToFE(fn string, success bool, ws *websocket.Conn) {
 	msg, _ := json.Marshal(ac)
 	outMsg := websockets.SendMessage{
-		Type:         "Agent",
+		Type:         "agent",
 		FunctionName: fn,
 		Data:         string(msg),
 		Success:      success,

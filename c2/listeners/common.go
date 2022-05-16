@@ -144,92 +144,91 @@ func checkIn(data string, agentKey string, externalIP string) {
 		logging.ErrorLogger.Println(err.Error())
 	}
 	//Now that i have the data i need to go through all of it and see what to do with each
-	if output != nil {
-		for key, value := range output {
-			switch value.JobName {
-			case "module":
-				modData := modulescommon.ModuleCom{}
-				err := json.Unmarshal([]byte(value.Results), &modData)
-				if err != nil {
-					logging.ErrorLogger.Println(err.Error())
-				}
-				modules.ModuleServer(modData)
-			case "shell": //Shell means it will go to the users console
-				msg := "[{\"AgentKey\": \"" + agentKey + "\"},"
-				logging.Logger.Println("Value is: ")
-				logging.Logger.Println(value)
-				newMsg, _ := json.Marshal(value)
-				msg += string(newMsg) + ","
-
-				msg = strings.TrimSuffix(msg, ",")
-				msg += "]"
-
-				outMsg := websockets.SendMessage{
-					Type:         "Agent",
-					FunctionName: "JobOutput",
-					Data:         msg,
-					Success:      true,
-				}
-				websockets.AlertRegisteredUsers(outMsg, agentKey)
-			case "error": //Error means it will go to the users console as an error message
-				msg := "[{\"AgentKey\": \"" + agentKey + "\"},"
-				logging.Logger.Println("Value is: ")
-				logging.Logger.Println(value)
-				newMsg, _ := json.Marshal(value)
-				msg += string(newMsg) + ","
-
-				msg = strings.TrimSuffix(msg, ",")
-				msg += "]"
-
-				outMsg := websockets.SendMessage{
-					Type:         "Agent",
-					FunctionName: "AgentError",
-					Data:         msg,
-					Success:      true,
-				}
-				websockets.AlertRegisteredUsers(outMsg, agentKey)
-			case "download":
-				download(value.Results, agentKey)
-				outMsg := websockets.SendMessage{
-					Type:         "Agent",
-					FunctionName: "JobOutput",
-					Data:         "Download Completed", //Change to the file location
-					Success:      true,
-				}
-				websockets.AlertRegisteredUsers(outMsg, agentKey)
-			case "fileBrowser":
-				msg := "[{\"AgentKey\": \"" + agentKey + "\"},"
-				logging.Logger.Println("Value is: ")
-				logging.Logger.Println(value)
-				newMsg, _ := json.Marshal(value)
-				msg += string(newMsg) + ","
-
-				msg = strings.TrimSuffix(msg, ",")
-				msg += "]"
-
-				outMsg := websockets.SendMessage{
-					Type:         "Agent",
-					FunctionName: "JobOutput",
-					Data:         msg,
-					Success:      true,
-				}
-				websockets.AlertRegisteredUsers(outMsg, agentKey)
-			case "pivot":
-				pivotHandler([]byte(value.Results), agentKey, externalIP)
-			case "kill":
-				agents.RemoveAgent(agentKey)
-				logging.Logger.Println("Removing agent: ", agentKey)
-				outMsg := websockets.SendMessage{
-					Type:         "Agent",
-					FunctionName: "JobOutput",
-					Data:         "Agent is being removed", //Change to the file location
-					Success:      true,
-				}
-				websockets.AlertRegisteredUsers(outMsg, agentKey)
+	for key, value := range output {
+		switch value.JobName {
+		case "module":
+			modData := modulescommon.ModuleCom{}
+			err := json.Unmarshal([]byte(value.Results), &modData)
+			if err != nil {
+				logging.ErrorLogger.Println(err.Error())
 			}
-			delete(output, key)
+			modules.ModuleServer(modData)
+		case "shell": //Shell means it will go to the users console
+			msg := "[{\"AgentKey\": \"" + agentKey + "\"},"
+			logging.Logger.Println("Value is: ")
+			logging.Logger.Println(value)
+			newMsg, _ := json.Marshal(value)
+			msg += string(newMsg) + ","
+
+			msg = strings.TrimSuffix(msg, ",")
+			msg += "]"
+
+			outMsg := websockets.SendMessage{
+				Type:         "agent",
+				FunctionName: "joboutput",
+				Data:         msg,
+				Success:      true,
+			}
+			websockets.AlertRegisteredUsers(outMsg, agentKey)
+		case "error": //Error means it will go to the users console as an error message
+			msg := "[{\"AgentKey\": \"" + agentKey + "\"},"
+			logging.Logger.Println("Value is: ")
+			logging.Logger.Println(value)
+			newMsg, _ := json.Marshal(value)
+			msg += string(newMsg) + ","
+
+			msg = strings.TrimSuffix(msg, ",")
+			msg += "]"
+
+			outMsg := websockets.SendMessage{
+				Type:         "agent",
+				FunctionName: "agenterror",
+				Data:         msg,
+				Success:      true,
+			}
+			websockets.AlertRegisteredUsers(outMsg, agentKey)
+		case "download":
+			download(value.Results, agentKey)
+			outMsg := websockets.SendMessage{
+				Type:         "agent",
+				FunctionName: "joboutput",
+				Data:         "Download Completed", //Change to the file location
+				Success:      true,
+			}
+			websockets.AlertRegisteredUsers(outMsg, agentKey)
+		case "fileBrowser":
+			msg := "[{\"AgentKey\": \"" + agentKey + "\"},"
+			logging.Logger.Println("Value is: ")
+			logging.Logger.Println(value)
+			newMsg, _ := json.Marshal(value)
+			msg += string(newMsg) + ","
+
+			msg = strings.TrimSuffix(msg, ",")
+			msg += "]"
+
+			outMsg := websockets.SendMessage{
+				Type:         "agent",
+				FunctionName: "joboutput",
+				Data:         msg,
+				Success:      true,
+			}
+			websockets.AlertRegisteredUsers(outMsg, agentKey)
+		case "pivot":
+			pivotHandler([]byte(value.Results), agentKey, externalIP)
+		case "kill":
+			agents.RemoveAgent(agentKey)
+			logging.Logger.Println("Removing agent: ", agentKey)
+			outMsg := websockets.SendMessage{
+				Type:         "agent",
+				FunctionName: "joboutput",
+				Data:         "Agent is being removed", //Change to the file location
+				Success:      true,
+			}
+			websockets.AlertRegisteredUsers(outMsg, agentKey)
 		}
+		delete(output, key)
 	}
+
 }
 
 //Doing that will allow us to pass alot more data including the correct filename to write the file too

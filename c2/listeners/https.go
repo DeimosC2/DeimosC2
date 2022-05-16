@@ -39,24 +39,24 @@ func StartHTTPSServer(newListener ListOptions, pr []byte, pu []byte) (*http.Serv
 	logging.Logger.Println("HTTPS Listener Starting")
 
 	m := newListener.Advanced.(map[string]interface{})
-	if !validation.ValidateMap(m, []string{"existingCert", "certData", "registerPath", "checkinPath", "modulePath", "pivotPath"}) {
+	if !validation.ValidateMap(m, []string{"existingcert", "certdata", "registerpath", "checkinpath", "modulepath", "pivotpath"}) {
 		return nil, false
 	}
 	cd := m["certData"].(map[string]interface{})
-	if !validation.ValidateMap(cd, []string{"customCert", "customKey"}) {
+	if !validation.ValidateMap(cd, []string{"customcert", "customkey"}) {
 		return nil, false
 	}
 
 	advancedOptions := AdvancedHTTPSOptions{
-		ExistingCert: m["existingCert"].(bool),
+		ExistingCert: m["existingcert"].(bool),
 		CertData: HTTPSListenerCertData{
-			Cert: cd["customCert"].(string),
-			Key:  cd["customKey"].(string),
+			Cert: cd["customcert"].(string),
+			Key:  cd["customkey"].(string),
 		},
-		RegisterPath: m["registerPath"].(string),
-		CheckinPath:  m["checkinPath"].(string),
-		ModulePath:   m["modulePath"].(string),
-		PivotPath:    m["pivotPath"].(string),
+		RegisterPath: m["registerrath"].(string),
+		CheckinPath:  m["checkinpath"].(string),
+		ModulePath:   m["modulepath"].(string),
+		PivotPath:    m["pivotpath"].(string),
 	}
 
 	cwd, err := os.Getwd()
