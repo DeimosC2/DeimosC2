@@ -136,8 +136,8 @@ func AgentCreate(data string, listenerName string, agentKey string, externalIP s
 
 	//Send to the Frontend
 	outMsg := websockets.SendMessage{
-		Type:         "Agent",
-		FunctionName: "New",
+		Type:         "agent",
+		FunctionName: "new",
 		Data:         string(msg),
 		Success:      true,
 	}
@@ -170,7 +170,7 @@ func GetJobs(agentKey string) []byte {
 
 				newPivJob := AgentJob{
 					AgentKey:  agentKey,
-					JobType:   "pivotJob",
+					JobType:   "pivotjob",
 					Arguments: args,
 				}
 				val.Jobs = append(val.Jobs, newPivJob)
@@ -256,7 +256,7 @@ func PivotListener(agentKey string, privKey []byte, port string, userID string, 
 	args = append(args, port, string(privKey))
 	listenerJob := AgentJob{
 		AgentKey:  agentKey,
-		JobType:   "pivotTCP",
+		JobType:   "pivottcp",
 		Arguments: args,
 	}
 

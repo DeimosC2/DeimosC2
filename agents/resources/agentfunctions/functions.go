@@ -52,9 +52,9 @@ type Output struct {
 
 //AgentJob is the standard struct for all jobs
 type AgentJob struct {
-	AgentKey  string   //Key of the agent to create the job for
-	JobType   string   //Type of job
-	Arguments []string //Job arguments adhering to the above formats
+	AgentKey  string   `json:"agentkey"`  //Key of the agent to create the job for
+	JobType   string   `json:"jobtype"`   //Type of job
+	Arguments []string `json:"arguments"` //Job arguments adhering to the above formats
 }
 
 //PivotJobHolder is used to hold of the pivot jobs that agents will request back
@@ -76,20 +76,20 @@ type PivotList struct {
 
 //FirstTime Struct
 type initialize struct {
-	Key         string   //Agent Key
-	OS          string   //Current OS
-	OSType      string   //Type of Operating System and/or Distro
-	OSVers      string   //Version of OS
-	AV          []string //AntiVirus Running
-	Hostname    string   //Current Machine Name
-	Username    string   //Current Username
-	LocalIP     string   //Local IP
-	AgentPath   string   //Agent Path
-	Shellz      []string //Available System Shells
-	Pid         int      //Get PID of agent
-	IsAdmin     bool     //Is admin user
-	IsElevated  bool     //Is elevated on Windows
-	ListenerKey string   //Listener that the agent is attached too
+	Key         string   `json:"key"`         //Agent Key
+	OS          string   `json:"os"`          //Current OS
+	OSType      string   `json:"ostype"`      //Type of Operating System and/or Distro
+	OSVers      string   `json:"osvers"`      //Version of OS
+	AV          []string `json:"av"`          //AntiVirus Running
+	Hostname    string   `json:"hostname"`    //Current Machine Name
+	Username    string   `json:"username"`    //Current Username
+	LocalIP     string   `json:"localip"`     //Local IP
+	AgentPath   string   `json:"agentpath"`   //Agent Path
+	Shellz      []string `json:"shellz"`      //Available System Shells
+	Pid         int      `json:"pid"`         //Get PID of agent
+	IsAdmin     bool     `json:"isadmin"`     //Is admin user
+	IsElevated  bool     `json:"iselevated"`  //Is elevated on Windows
+	ListenerKey string   `json:"listenerkey"` //Listener that the agent is attached too
 }
 
 //CheckTime sees if the current time is between the allowed hours, if not sleep until it is

@@ -14,20 +14,20 @@ import (
 )
 
 type Directory struct {
-	DirectoryName string
-	Perms         string
-	CreationTime  string
-	LastAccess    string
-	LastWrite     string
+	DirectoryName string `json:"directoryname"`
+	Perms         string `json:"perns"`
+	CreationTime  string `json:"creationtime"`
+	LastAccess    string `json:"lastaccess"`
+	LastWrite     string `json:"lastwrite"`
 }
 
 type Files struct {
-	Filename     string
-	Filesize     string
-	FilePerms    string
-	CreationTime string
-	LastAccess   string
-	LastWrite    string
+	Filename     string `json:"filename"`
+	Filesize     string `json:"filesize"`
+	FilePerms    string `json:"fileperms"`
+	CreationTime string `json:"creationtime"`
+	LastAccess   string `json:"lastaccess"`
+	LastWrite    string `json:"lastwrite"`
 }
 
 //FileBrowser will take in path and load up all the directories and files in a structure matching webshells
