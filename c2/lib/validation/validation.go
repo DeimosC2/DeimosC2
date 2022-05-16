@@ -12,9 +12,9 @@ func ValidateMapAlert(m map[string]interface{}, keys []string, ws *websocket.Con
 		if _, ok := m[x]; !ok {
 			logging.Logger.Println("Missing API variable", x)
 			outMsg := websockets.SendMessage{
-				Type:         "Listener",
-				FunctionName: "Error",
-				Data:         "{\"API_Variable_Issue\":" + "\"" + x + "\"}",
+				Type:         "listener",
+				FunctionName: "error",
+				Data:         "{\"api_variable_issue\":" + "\"" + x + "\"}",
 				Success:      false,
 			}
 			websockets.AlertSingleUser(outMsg, ws)

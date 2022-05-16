@@ -143,7 +143,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 		logging.Logger.Println("handleConnections::msg: \n", msg)
 		if uID.ChangePassword {
 			msg := websockets.SendMessage{
-				Type:         "ChangePassword",
+				Type:         "changepassword",
 				FunctionName: "",
 				Data:         "",
 				Success:      true,
@@ -152,7 +152,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 		} else if uID.MFASetup && !uID.MFA {
 			//If MFA is set to true in AppSettings table and the user has never setup MFA before
 			msg := websockets.SendMessage{
-				Type:         "MFA Setup Required",
+				Type:         "mfa_setup_required",
 				FunctionName: "",
 				Data:         "",
 				Success:      true,
@@ -162,7 +162,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			mfaGenerate(uID.UserID, ws)
 		} else if uID.MFASetup && uID.MFA && !uID.MFASuccess {
 			msg := websockets.SendMessage{
-				Type:         "MFA Required",
+				Type:         "mfa_required",
 				FunctionName: "",
 				Data:         "",
 				Success:      true,
@@ -180,42 +180,42 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			websockets.AlertSingleUser(output, ws)
 			//Checking msg.Type for API calls
 			switch msg.Type {
-			case "Listener":
+			case "listener":
 				logging.Logger.Println("Total MSG is: ", msg)
 				lib.ParseSocket(msg.FunctionName, msg.Data, ws, uID.UserID, uID.Username)
-			case "Agent":
+			case "agent":
 				agents.ParseSocket(msg.FunctionName, msg.Data, ws, uID.UserID, uID.Username)
-			case "Register":
-				if msg.FunctionName == "Agent" {
+			case "register":
+				if msg.FunctionName == "agent" {
 					m := msg.Data.(map[string]interface{})
-					if !validation.ValidateMapAlert(m, []string{"AgentKey"}, ws) {
+					if !validation.ValidateMapAlert(m, []string{"agentkey"}, ws) {
 						break
 					}
-					websockets.RegisterAgent(ws, m["AgentKey"].(string))
+					websockets.RegisterAgent(ws, m["agentkey"].(string))
 				}
-			case "Deregister":
-				if msg.FunctionName == "Agent" {
+			case "deregister":
+				if msg.FunctionName == "agent" {
 					m := msg.Data.(map[string]interface{})
-					if !validation.ValidateMapAlert(m, []string{"AgentKey"}, ws) {
+					if !validation.ValidateMapAlert(m, []string{"agentkey"}, ws) {
 						break
 					}
-					websockets.DeregisterAgent(ws, m["AgentKey"].(string))
+					websockets.DeregisterAgent(ws, m["agentkey"].(string))
 				}
-			case "Metrics":
+			case "metrics":
 				dashparse(msg.FunctionName, msg.Data, ws)
-			case "WebShell":
+			case "webShell":
 				webshells.ParseSocket(msg.FunctionName, msg.Data, ws)
-			case "Admin":
+			case "admin":
 				sqldb.ParseSocket(msg.FunctionName, msg.Data, ws, uID.Admin, uID.UserID)
-			case "Loot":
+			case "loot":
 				loot.ParseSocket(msg.FunctionName, msg.Data, ws)
-			case "Archive":
+			case "archive":
 				//Checks if user is admin before allowing this API to run
 				if uID.Admin {
 					archive.ParseSocket(msg.FunctionName, msg.Data, ws)
 				} else {
 					msg := websockets.SendMessage{
-						Type:         "Error",
+						Type:         "error",
 						FunctionName: "",
 						Data:         "Unauthorized Access. Nice Try!",
 						Success:      false,

@@ -158,7 +158,7 @@ func server(data modulescommon.ModuleCom) string {
 		AgentKey:   data.AgentKey,
 		ModuleName: data.ModuleName,
 		OutputType: "Loot",
-		Output:     []byte("{\"Type\":\"SAM\", \"Data\": " + string(parsedSamFile) + "}"),
+		Output:     []byte("{\"type\":\"SAM\", \"data\": " + string(parsedSamFile) + "}"),
 	}
 
 	client.Call("ModData.ModSendData", &LootSamMsg, &reply)

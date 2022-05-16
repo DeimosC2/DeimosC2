@@ -77,7 +77,7 @@ private void ServerInfo()
 	string username = Environment.UserName;
 	string local_ip = Request.ServerVariables["LOCAL_ADDR"];
 
-	string server_info_1 = "{\"OS\": \""+ os +"\", \"Hostname\": \""+ machine_name +"\", \"Domain\": \""+ domain +"\", \"Username\": \""+ username +"\", \"LocalIP\": \""+ local_ip +"\"}";
+	string server_info_1 = "{\"os\": \""+ os +"\", \"hostname\": \""+ machine_name +"\", \"domain\": \""+ domain +"\", \"username\": \""+ username +"\", \"locali[\": \""+ local_ip +"\"}";
 
 	Response.Clear();
 	Response.ContentType = "application/json";

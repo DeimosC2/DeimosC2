@@ -1,3 +1,4 @@
+//go:build linux
 // +build linux
 
 package filebrowser
@@ -34,9 +35,9 @@ func FileBrowser(path string) string {
 	var fileArray []Files
 	var dirArray []Directory
 	//Get one directory above for the parent directory
-	parentDir := "\"ParentDir\":\"" + filepath.Dir(path) + "\","
+	parentDir := "\"parentdir\":\"" + filepath.Dir(path) + "\","
 	//Get current directory
-	cwd := "\"CWD\":\"" + path + "\","
+	cwd := "\"cwd\":\"" + path + "\","
 
 	//Read the directory from the provided path
 	files, _ := ioutil.ReadDir(path)
@@ -75,6 +76,6 @@ func FileBrowser(path string) string {
 	fileMsg, _ := json.Marshal(fileArray)
 
 	//Send to functions.go the JSON filebrowser
-	jsonMsg := "\"Drives\": [\"null\"]," + cwd + parentDir + "\"Directories\":" + string(dirMsg) + ",\"Files\":" + string(fileMsg)
+	jsonMsg := "\"drives\": [\"null\"]," + cwd + parentDir + "\"directories\":" + string(dirMsg) + ",\"files\":" + string(fileMsg)
 	return jsonMsg
 }

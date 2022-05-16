@@ -120,14 +120,12 @@ func register(data string, lName string, DNS bool, agentKey string, externalIP s
 //Takes in the agents job output and then sends it any new jobs that may exist
 func checkIn(data string, agentKey string, externalIP string) {
 	//Update Heartbeat
-	hB := "[{\"agentkey\": \"" + agentKey + "\", \"time\": \"" + time.Now().String() + "\"}]"
-	outMsg := websockets.SendMessage{
-		Type:         "agent",
-		FunctionName: "heartbeat",
-		Data:         hB,
-		Success:      true,
+	hb := websockets.HeartBeat{
+		AgentKey: agentKey,
+		Time:     time.Now(),
 	}
-	websockets.AlertUsers(outMsg)
+
+	hb.Send()
 
 	//Update last checkin
 	sqldb.AgentCheckin(agentKey)

