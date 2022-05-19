@@ -1,0 +1,18 @@
+version: '3'
+services:
+  deimos-server:
+    image: golang:1.18
+    volumes:
+      - "./:/DeimosC2"
+    working_dir: /DeimosC2
+    entrypoint: ["go", "run", "c2/main.go"]
+    ports:
+      - 8443:8443
+  web-ui:
+    image: node:lts-fermium
+    volumes:
+      - "./:/DeimosC2"
+    working_dir: /DeimosC2/frontend
+    entrypoint: ["npm", "run", "serve"]
+    ports:
+      - 8080:8080
