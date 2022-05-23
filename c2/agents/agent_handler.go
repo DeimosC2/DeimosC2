@@ -291,20 +291,22 @@ func ReInitAgents() {
 	}
 }
 
+func ListAgents() (list []Agent) {
+	AllAgents.Mutex.RLock()
+	defer AllAgents.Mutex.RUnlock()
+	for i := range AllAgents.List {
+		list = append(list, *AllAgents.List[i])
+	}
+	return
+}
+
 //ParseSocket takes in data from the websocket and does what it needs to with it
 func ParseSocket(fname string, data interface{}, ws *websocket.Conn, userID string, username string) {
 	m := data.(map[string]interface{})
 
 	switch fname {
 	case "list":
-		AllAgents.Mutex.Lock()
-		defer AllAgents.Mutex.Unlock()
-		var aList []string
-		for _, v := range AllAgents.List {
-			newMsg, _ := json.Marshal(v)
-			aList = append(aList, string(newMsg))
-		}
-		msg, _ := json.Marshal(aList)
+		msg, _ := json.Marshal(ListAgents())
 
 		outMsg := websockets.SendMessage{
 			Type:         "agent",
