@@ -39,13 +39,13 @@ func dashparse(fname string, data interface{}, ws *websocket.Conn) {
 
 	//Timeline is the only dashboard at this time.
 	switch fname {
-	case "AgentTimeline":
+	case "agenttimeline":
 		timeline(ws)
-	case "AgentOSType":
+	case "agentostype":
 		osType(ws)
-	case "AgentByListener":
+	case "agentbylistener":
 		agentListener(ws)
-	case "PivotGraph":
+	case "pivotgraph":
 		pivotGraph(ws, data)
 	}
 
@@ -56,8 +56,8 @@ func timeline(ws *websocket.Conn) {
 	data := strings.Join(tdata, " ")
 	logging.Logger.Println(data)
 	outMsg := websockets.SendMessage{
-		Type:         "Metrics",
-		FunctionName: "AgentTimeline",
+		Type:         "metrics",
+		FunctionName: "agenttimeline",
 		Data:         data,
 		Success:      true,
 	}
@@ -68,8 +68,8 @@ func osType(ws *websocket.Conn) {
 	data := sqldb.AgentOSTypes()
 	logging.Logger.Println(data)
 	outMsg := websockets.SendMessage{
-		Type:         "Metrics",
-		FunctionName: "AgentOSType",
+		Type:         "metrics",
+		FunctionName: "agentostype",
 		Data:         data,
 		Success:      true,
 	}
@@ -78,10 +78,10 @@ func osType(ws *websocket.Conn) {
 
 func agentListener(ws *websocket.Conn) {
 	data := sqldb.AgentByListener()
-	logging.Logger.Println("AgentListener:", data)
+	logging.Logger.Println("agentlistener:", data)
 	outMsg := websockets.SendMessage{
-		Type:         "Metrics",
-		FunctionName: "AgentByListener",
+		Type:         "metrics",
+		FunctionName: "agentbylistener",
 		Data:         data,
 		Success:      true,
 	}
@@ -134,11 +134,11 @@ func pivotGraph(ws *websocket.Conn, data interface{}) {
 	logging.Logger.Println("DATA IS:", len(m))
 	if len(m) != 0 {
 
-		if !validation.ValidateMapAlert(m, []string{"Listener"}, ws) {
+		if !validation.ValidateMapAlert(m, []string{"listener"}, ws) {
 			return
 		}
 
-		if val, ok := graphMap[m["Listener"].(string)]; ok {
+		if val, ok := graphMap[m["listener"].(string)]; ok {
 			finalMsg = "["
 			msg, _ := json.Marshal(val)
 			finalMsg += string(msg)
@@ -158,8 +158,8 @@ func pivotGraph(ws *websocket.Conn, data interface{}) {
 	}
 
 	outMsg := websockets.SendMessage{
-		Type:         "Metrics",
-		FunctionName: "PivotGraph",
+		Type:         "metrics",
+		FunctionName: "pivotgraph",
 		Data:         finalMsg,
 		Success:      true,
 	}
