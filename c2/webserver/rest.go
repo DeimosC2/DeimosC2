@@ -223,7 +223,7 @@ func agentOSType(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func AgentByListener(w http.ResponseWriter, r *http.Request) {
+func agentByListener(w http.ResponseWriter, r *http.Request) {
 
 }
 

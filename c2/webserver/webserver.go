@@ -294,6 +294,18 @@ func RunServer(c Config) {
 	router.HandleFunc("/listener/{key}/compiled", listenerGetCompiled)
 	router.HandleFunc("/listener/{key}/edit", listenerEdit)
 
+	/*
+		Agent REST API routes
+	*/
+	router.HandleFunc("/agent/list", agentList)
+
+	/*
+		Metrics REST API routes
+	*/
+	router.HandleFunc("/metrics/agenttimeline", agentTimeline)
+	router.HandleFunc("/metrics/agentostype", agentTimeline)
+	router.HandleFunc("/metrics/agentbylistener", agentTimeline)
+
 	//Serve the main application
 	router.PathPrefix("/").HandlerFunc(http.HandlerFunc(index(cwd)))
 
