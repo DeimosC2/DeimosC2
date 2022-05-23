@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/DeimosC2/DeimosC2/c2/agents"
 	"github.com/DeimosC2/DeimosC2/c2/lib"
 	"github.com/DeimosC2/DeimosC2/c2/lib/sqldb"
 	"github.com/DeimosC2/DeimosC2/c2/listeners"
@@ -199,3 +200,33 @@ func listenerEdit(w http.ResponseWriter, r *http.Request) {
 	Below is the list of Agent Functions that are exposed to the REST API
 
 */
+
+func agentList(w http.ResponseWriter, r *http.Request) {
+	if !isAuthed(r) {
+		http.Redirect(w, r, "/login", http.StatusFound)
+	}
+
+	json.NewEncoder(w).Encode(agents.ListAgents())
+}
+
+/*
+
+	Below is the list of Metric Functions that are exposed to the REST API
+
+*/
+
+func agentTimeline(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func agentOSType(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func AgentByListener(w http.ResponseWriter, r *http.Request) {
+
+}
+
+// func pivotGraph(w http.ResponseWriter, r *http.Request) {
+
+// }
