@@ -303,8 +303,8 @@ func RunServer(c Config) {
 		Metrics REST API routes
 	*/
 	router.HandleFunc("/metrics/agenttimeline", agentTimeline)
-	router.HandleFunc("/metrics/agentostype", agentTimeline)
-	router.HandleFunc("/metrics/agentbylistener", agentTimeline)
+	router.HandleFunc("/metrics/agentostype", agentOSType)
+	router.HandleFunc("/metrics/agentbylistener", agentByListener)
 
 	//Serve the main application
 	router.PathPrefix("/").HandlerFunc(http.HandlerFunc(index(cwd)))
