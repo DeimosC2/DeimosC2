@@ -38,7 +38,7 @@
     "vue-thanos-snap-effect": "^1.0.2",
     "vue2-transitions": "^0.2.3",
     "vuelidate": "^0.7.5",
-    "vuex": "^3.1.2",
+    "vuex": "^3.6.2",
     "yargs-parser": "^18.1.3"
   },
   "devDependencies": {
