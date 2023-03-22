@@ -11,7 +11,7 @@
     "@fortawesome/fontawesome-free": "^5.13.1",
     "@panzoom/panzoom": "^4.1.0",
     "apexcharts": "^3.35.5",
-    "axios": "^0.21.1",
+    "axios": "^0.27.2",
     "chart.js": "^2.7.3",
     "codemirror": "^5.65.8",
     "element-ui": "^2.13.1",
