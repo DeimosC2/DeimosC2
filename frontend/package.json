@@ -16,7 +16,7 @@
     "codemirror": "^5.65.8",
     "element-ui": "^2.13.1",
     "jquery": "^3.5.1",
-    "jquery.terminal": "^2.31.1",
+    "jquery.terminal": "^2.34.0",
     "lodash": "^4.17.15",
     "moment": "^2.29.4",
     "pretty-bytes": "^5.3.0",
