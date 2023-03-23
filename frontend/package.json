@@ -10,7 +10,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.4",
     "@panzoom/panzoom": "^4.5.1",
-    "apexcharts": "^3.35.5",
+    "apexcharts": "^3.37.1",
     "axios": "^0.27.2",
     "chart.js": "^2.7.3",
     "codemirror": "^5.65.8",
