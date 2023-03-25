@@ -19,7 +19,7 @@
     "jquery.terminal": "^2.34.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
-    "pretty-bytes": "^5.3.0",
+    "pretty-bytes": "^5.6.0",
     "raphael": "^2.3.0",
     "treant-js": "^1.0.1",
     "uuid": "^3.4.0",
