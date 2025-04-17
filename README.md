@@ -1,7 +1,12 @@
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/DeimosC2/DeimosC2/blob/master/LICENSE)
 
 # DeimosC2
-Deimos is in: __Beta__
+Deimos is in: __DEPRECATED__
+
+**DeimosC2 is no longer maintained and has a known XSS vulnerability (CVE-2025-26244).**
+
+**Thanks to JaRm222 for identifying the vuln and notifying us.  His writeup of the vuln can be found [here](https://jarm222.github.io/posts/CVE-2025-26244-Writeup/).**
 
 DeimosC2 is a post-exploitation Command & Control (C2) tool that leverages multiple communication methods in order to control machines that have been compromised. DeimosC2 server and agents works on, and has been tested on, Windows, Darwin, and Linux. It is entirely written in [Golang](https://golang.org/) with a front end written in [Vue.js](https://vuejs.org/).
 
