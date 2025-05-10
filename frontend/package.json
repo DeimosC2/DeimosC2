@@ -25,7 +25,7 @@
     "uuid": "^3.4.0",
     "v-jsoneditor": "^1.4.1",
     "vue": "^2.7.10",
-    "vue-apexcharts": "^1.5.3",
+    "vue-apexcharts": "^1.6.2",
     "vue-chartjs": "^3.4.0",
     "vue-codemirror": "^4.0.6",
     "vue-directive-tooltip": "^1.6.3",
